@@ -153,6 +153,25 @@ app.get('/api/crossword/reveal', async (req, res) => {
     }
   });
 
+app.get('/api/youtube/views/:videoId', async (req, res) => {
+    try {
+      const { videoId } = req.params;
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`
+      );
+      
+      if (response.data.items && response.data.items.length > 0) {
+        const views = response.data.items[0].statistics.viewCount;
+        res.json({ views: parseInt(views) });
+      } else {
+        res.status(404).json({ error: 'Video not found' });
+      }
+    } catch (error) {
+      console.error('YouTube API error:', error);
+      res.status(500).json({ error: 'Failed to fetch views' });
+    }
+  });
+
 app.listen(3000, () => {
     console.log('API running on port 3000');
   });

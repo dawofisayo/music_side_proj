@@ -4,6 +4,7 @@ import Heardle from './components/Heardle';
 import Crossword from './components/Crossword';
 import DecadeGame from './components/Heardles/DecadeGame';
 import CountryGame from './components/Heardles/CountryGame';
+import HigherLowerViews from './components/HigherLower/HigherLowerViews';
 
 
 function App() {
@@ -183,6 +184,12 @@ function App() {
             onClick={() => setActiveTab('country')}
           >
             🌍 Country Game
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'higherlower' ? 'active' : ''}`}
+            onClick={() => setActiveTab('higherlower')}
+          >
+            🎮 Higher or Lower
           </button>
         </div>
 
@@ -403,6 +410,7 @@ function App() {
         {activeTab === 'crossword' && <Crossword />}
         {activeTab === 'decade' && <DecadeGame />}
         {activeTab === 'country' && <CountryGame />}
+        {activeTab === 'higherlower' && <HigherLowerViews />}
       </div>
     </div>
   );

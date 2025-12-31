@@ -448,7 +448,7 @@ function Crossword() {
     <div className="crossword-container">
       <div className="crossword-header">
         <h1>📝 Daily Music Crossword</h1>
-        <p className="date">{new Date(puzzle.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         {puzzle.theme && <p className="theme">Today's Theme: {puzzle.theme.topic}</p>}
       </div>
 
