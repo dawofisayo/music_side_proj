@@ -1,26 +1,42 @@
 import { useState, useRef, useEffect } from 'react';
 import { SONG_DATABASE } from '../../data/songs';
-import './DecadeGame.css';
+import './CountryGame.css';
 
-function DecadeGame() {
-  // I'll set up state
+function CountryGame() {
   const [dailySong, setDailySong] = useState(null);
   const [userGuess, setUserGuess] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [playCount, setPlayCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   
   const playerRef = useRef(null);
-  const maxPlays = 3; // Can listen 3 times before must guess
+  const maxPlays = 3;
 
-  // Get a random song on mount
+  // Comprehensive list of countries
+  const allCountries = [
+    'Afghanistan', 'Albania', 'Algeria', 'Argentina', 'Australia', 'Austria',
+    'Bangladesh', 'Belgium', 'Brazil', 'Bulgaria', 'Canada', 'Chile', 'China',
+    'Colombia', 'Croatia', 'Cuba', 'Czech Republic', 'Denmark', 'Dominican Republic',
+    'Egypt', 'Estonia', 'Ethiopia', 'Finland', 'France', 'Germany', 'Ghana', 'Greece',
+    'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Ireland', 'Israel', 'Italy',
+    'Jamaica', 'Japan', 'Kenya', 'South Korea', 'Latvia', 'Lebanon', 'Lithuania',
+    'Malaysia', 'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway',
+    'Pakistan', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Romania', 'Russia',
+    'Saudi Arabia', 'Serbia', 'Singapore', 'South Africa', 'Spain', 'Sweden',
+    'Switzerland', 'Taiwan', 'Thailand', 'Turkey', 'Ukraine', 'United Arab Emirates',
+    'UK', 'USA', 'Venezuela', 'Vietnam'
+  ];
+
+  // Get random song
   useEffect(() => {
     const randomSong = SONG_DATABASE[Math.floor(Math.random() * SONG_DATABASE.length)];
     setDailySong(randomSong);
   }, []);
 
-  // YouTube player setup; same as heardle
+  // YouTube player setup
   useEffect(() => {
     if (!dailySong) return;
 
@@ -30,7 +46,7 @@ function DecadeGame() {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('decade-player', {
+      playerRef.current = new window.YT.Player('country-player', {
         height: '0',
         width: '0',
         videoId: dailySong.youtubeId,
@@ -58,6 +74,10 @@ function DecadeGame() {
     };
   }, [dailySong]);
 
+  /*
+  TODO: Implement playSnippet
+  Hint: Copy from DecadeGame - exact same logic!
+  */
   const playSnippet = () => {
     if (playCount >= maxPlays || !playerRef.current) return;
     
@@ -77,39 +97,48 @@ function DecadeGame() {
     }
     
   };
+  const handleSearch = (value) => {
+    setSearchQuery(value);
+    
+    if (value.length < 1) {
+      setSearchResults([]);
+      return;
+    }
+    
+    // Filter countries based on search query
+    const filtered = allCountries.filter(country =>
+      country.toLowerCase().includes(value.toLowerCase())
+    ).slice(0, 10); // Show top 10 results
+    
+    setSearchResults(filtered);
+  };
 
-  const handleDecadeGuess = (decade) => {
-    setUserGuess(decade);
+  const handleCountryGuess = (country) => {
+    setUserGuess(country);
     setShowResult(true);
+    setSearchQuery('');
+    setSearchResults([]);
     if (playerRef.current && isPlaying) {
       playerRef.current.pauseVideo();
       setIsPlaying(false);
     }
   };
-
-  const getCorrectDecade = (year) => {
-    return Math.floor(year / 10) * 10 + 's';
-  };
+  
   const isCorrect = () => {
-    return userGuess === getCorrectDecade(dailySong.releaseYear);
+    return userGuess === dailySong.country;
   };
 
   if (!dailySong) {
-    return <div className="decade-game-container">Loading...</div>;
+    return <div className="country-game-container">Loading...</div>;
   }
 
-  // Available decades
-  const decades = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
-
   return (
-    <div className="decade-game-container">
-      <h1>🎵 Guess the Decade</h1>
-      <p className="subtitle">Listen to the song and guess which decade it's from</p>
+    <div className="country-game-container">
+      <h1>🌍 Guess the Country</h1>
+      <p className="subtitle">Listen to the song and guess where the artist is from</p>
 
-      {/* Hidden YouTube player */}
-      <div id="decade-player" style={{ display: 'none' }}></div>
+      <div id="country-player" style={{ display: 'none' }}></div>
 
-      {/* Play button */}
       {!showResult && (
         <div className="play-section">
           <button
@@ -125,40 +154,57 @@ function DecadeGame() {
         </div>
       )}
 
-      {/* Decade buttons */}
       {!showResult && (
-        <div className="decades-grid">
-          {decades.map((decade) => (
-            <button
-            key={decade}
-              onClick={() => handleDecadeGuess(decade)}
-              disabled={playCount === 0}
-            >
-              {decade}
-            </button>
-          ))}
+        <div className="country-search-container">
+          <input
+            type="text"
+            placeholder="Search for a country..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="country-search-input"
+            disabled={playCount === 0}
+          />
+          
+          {searchResults.length > 0 && (
+            <div className="country-search-results">
+              {searchResults.map((country, idx) => (
+                <div
+                  key={idx}
+                  className="country-result-item"
+                  onClick={() => handleCountryGuess(country)}
+                >
+                  {country}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {searchQuery.length > 0 && searchResults.length === 0 && (
+            <div className="country-no-results">
+              No countries found matching "{searchQuery}"
+            </div>
+          )}
         </div>
       )}
 
-      {/* Result */}
       {showResult && (
         <div className={`result ${isCorrect() ? 'correct' : 'wrong'}`}>
           {isCorrect() ? (
             <div>
               <h2>🎉 Correct!</h2>
-              <p>You guessed the right decade!</p>
+              <p>You guessed the right country!</p>
             </div>
           ) : (
             <div>
               <h2>❌ Not quite!</h2>
-              <p>The correct decade was: <strong>{getCorrectDecade(dailySong.releaseYear)}</strong></p>
+              <p>The correct answer was: <strong>{dailySong.country}</strong></p>
             </div>
           )}
           
           <div className="song-reveal">
             <p><strong>{dailySong.title}</strong></p>
             <p>by {dailySong.artist}</p>
-            <p>Released: {dailySong.releaseYear}</p>
+            <p>Country: {dailySong.country}</p>
             <a 
               href={`https://www.youtube.com/watch?v=${dailySong.youtubeId}`}
               target="_blank"
@@ -181,4 +227,4 @@ function DecadeGame() {
   );
 }
 
-export default DecadeGame;
+export default CountryGame;

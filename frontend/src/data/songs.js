@@ -5,8 +5,9 @@ export const SONG_DATABASE = [
       artist: "The Weeknd",
       album: "After Hours",
       spotifyId: "0VjIjW4GlUZAMYd2vXMi3b",
-      youtubeId: "4NRXx6U8ABQ", // Official music video
-      releaseYear: 2019
+      youtubeId: "4NRXx6U8ABQ",
+      releaseYear: 2019,
+      country: "Canada"  // ← Add this to each song
     },
     {
       id: 2,
@@ -15,7 +16,8 @@ export const SONG_DATABASE = [
       album: "÷",
       spotifyId: "7qiZfU4dY1lWllzX7mPBI0",
       youtubeId: "JGwWNGJdvx8",
-      releaseYear: 2017
+      releaseYear: 2017,
+      country: "UK"
     },
     {
       id: 3,
@@ -24,7 +26,8 @@ export const SONG_DATABASE = [
       album: "Future Nostalgia",
       spotifyId: "39LLxExYz6ewLAcYrzQQyP",
       youtubeId: "TUVcZfQe-Kw",
-      releaseYear: 2020
+      releaseYear: 2020,
+      country: "UK"
     },
     {
       id: 4,
@@ -33,7 +36,8 @@ export const SONG_DATABASE = [
       album: "Fine Line",
       spotifyId: "6UelLqGlWMcVH1E5c4H7lY",
       youtubeId: "E07s5ZYygMg",
-      releaseYear: 2019
+      releaseYear: 2019,
+      country: "UK"
     },
     {
       id: 5,
@@ -42,7 +46,8 @@ export const SONG_DATABASE = [
       album: "WHEN WE ALL FALL ASLEEP",
       spotifyId: "2Fxmhks0bxGSBdJ92vM42m",
       youtubeId: "DyDfgMOUjCI",
-      releaseYear: 2019
+      releaseYear: 2019,
+      country: "USA"
     },
     {
       id: 6,
@@ -51,7 +56,8 @@ export const SONG_DATABASE = [
       album: "The Kids Are Coming",
       spotifyId: "2XU0oxnq2qxCpomAAuJY8K",
       youtubeId: "q0hyYWKXF0Q",
-      releaseYear: 2019
+      releaseYear: 2019,
+      country: "Australia"
     },
     {
       id: 7,
@@ -60,7 +66,8 @@ export const SONG_DATABASE = [
       album: "Hollywood's Bleeding",
       spotifyId: "21jGcNKet2qwijlDFuPiPb",
       youtubeId: "wXhTHyIgQ_U",
-      releaseYear: 2019
+      releaseYear: 2019,
+      country: "USA"
     },
     {
       id: 8,
@@ -69,7 +76,8 @@ export const SONG_DATABASE = [
       album: "21",
       spotifyId: "1zwMYTA5nlNjZxYrvBB2pV",
       youtubeId: "hLQl3WQQoQ0",
-      releaseYear: 2011
+      releaseYear: 2011,
+      country: "UK"
     },
   ];
   

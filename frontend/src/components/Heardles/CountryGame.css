@@ -1,0 +1,199 @@
+.country-game-container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .country-game-container h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  
+  .subtitle {
+    color: #666;
+    margin-bottom: 40px;
+  }
+  
+  .play-section {
+    margin: 40px 0;
+  }
+  
+  .play-button {
+    padding: 20px 40px;
+    font-size: 18px;
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  
+  .play-button:hover:not(:disabled) {
+    background-color: #1ed760;
+    transform: scale(1.05);
+  }
+  
+  .play-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .country-search-container {
+    position: relative;
+    margin: 30px 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .country-search-input {
+    width: 100%;
+    padding: 18px 24px;
+    font-size: 1.05rem;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 16px;
+    box-sizing: border-box;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    color: #fff;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .country-search-input::placeholder {
+    color: #64748b;
+  }
+  
+  .country-search-input:hover:not(:disabled) {
+    border-color: rgba(102, 126, 234, 0.5);
+  }
+  
+  .country-search-input:focus:not(:disabled) {
+    outline: none;
+    border-color: #667eea;
+    background: linear-gradient(145deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.08) 100%);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 8px 30px rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .country-search-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  
+  .country-search-results {
+    position: absolute;
+    width: 100%;
+    background: linear-gradient(145deg, rgba(15, 15, 35, 0.98) 0%, rgba(26, 26, 62, 0.98) 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    max-height: 350px;
+    overflow-y: auto;
+    z-index: 10;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    margin-top: -2px;
+  }
+  
+  .country-result-item {
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    transition: all 0.2s ease;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .country-result-item:last-child {
+    border-bottom: none;
+  }
+  
+  .country-result-item:hover {
+    background: linear-gradient(145deg, rgba(102, 126, 234, 0.2) 0%, rgba(102, 126, 234, 0.1) 100%);
+    transform: translateX(4px);
+    color: #c4b5fd;
+  }
+  
+  .country-no-results {
+    position: absolute;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(145deg, rgba(15, 15, 35, 0.98) 0%, rgba(26, 26, 62, 0.98) 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    color: #94a3b8;
+    text-align: center;
+    font-size: 0.95rem;
+    backdrop-filter: blur(20px);
+    margin-top: -2px;
+  }
+  
+  .result {
+    margin-top: 40px;
+    padding: 30px;
+    border-radius: 12px;
+  }
+  
+  .result.correct {
+    background-color: #c8e6c9;
+    border: 3px solid #4CAF50;
+  }
+  
+  .result.wrong {
+    background-color: #ffcdd2;
+    border: 3px solid #f44336;
+  }
+  
+  .result h2 {
+    margin-top: 0;
+  }
+  
+  .song-reveal {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 8px;
+  }
+  
+  .song-reveal p {
+    margin: 10px 0;
+    font-size: 1.1em;
+  }
+  
+  .youtube-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #FF0000;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+  }
+  
+  .youtube-link:hover {
+    background-color: #CC0000;
+  }
+  
+  .play-again-button {
+    margin-top: 20px;
+    padding: 15px 30px;
+    font-size: 16px;
+    background-color: #FF6B6B;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .play-again-button:hover {
+    background-color: #EE5A5A;
+  }

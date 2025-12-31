@@ -3,6 +3,7 @@ import './App.css';
 import Heardle from './components/Heardle';
 import Crossword from './components/Crossword';
 import DecadeGame from './components/Heardles/DecadeGame';
+import CountryGame from './components/Heardles/CountryGame';
 
 
 function App() {
@@ -176,6 +177,12 @@ function App() {
             onClick={() => setActiveTab('decade')}
           >
             🎮 Decade Game
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'country' ? 'active' : ''}`}
+            onClick={() => setActiveTab('country')}
+          >
+            🌍 Country Game
           </button>
         </div>
 
@@ -395,6 +402,7 @@ function App() {
         {activeTab === 'heardle' && <Heardle />}
         {activeTab === 'crossword' && <Crossword />}
         {activeTab === 'decade' && <DecadeGame />}
+        {activeTab === 'country' && <CountryGame />}
       </div>
     </div>
   );
