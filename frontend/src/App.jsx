@@ -14,7 +14,8 @@ function App() {
   const [error, setError] = useState(null);
   const [inputMode, setInputMode] = useState('file');
   const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [activeTab, setActiveTab] = useState('identify');
+  const [activeTab, setActiveTab] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // Microphone recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -64,7 +65,7 @@ function App() {
         setRecordingTime(prev => prev + 1);
       }, 1000);
     } catch (err) {
-      setError('Could not access microphone. Please allow microphone access.');
+      setError('Can\'t access your mic. Make sure to allow microphone access.');
     }
   };
 
@@ -86,17 +87,17 @@ function App() {
     e.preventDefault();
     
     if (inputMode === 'file' && !file) {
-      setError('Please select a file');
+      setError('Pick a file first');
       return;
     }
     
     if (inputMode === 'url' && !youtubeUrl.trim()) {
-      setError('Please enter a YouTube URL');
+      setError('Drop a YouTube link here');
       return;
     }
 
     if (inputMode === 'mic' && !recordedBlob) {
-      setError('Please record some audio first');
+      setError('Record something first');
       return;
     }
 
@@ -132,7 +133,7 @@ function App() {
       const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError('Failed to identify song: ' + err.message);
+      setError('Oops, couldn\'t identify that song: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -149,53 +150,154 @@ function App() {
         <span>♪</span>
         <span>♫</span>
       </div>
-      <div className="container">
-        <h1>🎵 Music Games</h1>
-        <p className="subtitle">Identify songs, play Heardle, and solve music crosswords</p>
-        
-        {/* Tab navigation */}
-        <div className="tab-nav">
+      
+      {/* Sidebar Navigation */}
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div className="sidebar-header">
+          <h1 className="sidebar-logo">🎵 SoundCheck</h1>
           <button 
-            className={`tab-btn ${activeTab === 'identify' ? 'active' : ''}`}
-            onClick={() => setActiveTab('identify')}
+            className="sidebar-toggle"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            🔍 Song Identifier
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'heardle' ? 'active' : ''}`}
-            onClick={() => setActiveTab('heardle')}
-          >
-            🎮 Heardle
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'crossword' ? 'active' : ''}`}
-            onClick={() => setActiveTab('crossword')}
-          >
-            📝 Music Crossword
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'decade' ? 'active' : ''}`}
-            onClick={() => setActiveTab('decade')}
-          >
-            🎮 Decade Game
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'country' ? 'active' : ''}`}
-            onClick={() => setActiveTab('country')}
-          >
-            🌍 Country Game
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'higherlower' ? 'active' : ''}`}
-            onClick={() => setActiveTab('higherlower')}
-          >
-            🎮 Higher or Lower
+            {sidebarCollapsed ? '→' : '←'}
           </button>
         </div>
+        
+        <nav className="sidebar-nav">
+          {/* Discovery Section */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Discovery</h3>
+            <button 
+              className={`nav-item ${activeTab === 'identify' ? 'active' : ''}`}
+              onClick={() => setActiveTab('identify')}
+            >
+              <span className="nav-icon">🎤</span>
+              <span className="nav-label">Song Identifier</span>
+            </button>
+          </div>
+          
+          {/* Heardle Section */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Heardle</h3>
+            <button 
+              className={`nav-item ${activeTab === 'heardle' ? 'active' : ''}`}
+              onClick={() => setActiveTab('heardle')}
+            >
+              <span className="nav-icon">🎮</span>
+              <span className="nav-label">Classic Heardle</span>
+            </button>
+            <button 
+              className={`nav-item ${activeTab === 'decade' ? 'active' : ''}`}
+              onClick={() => setActiveTab('decade')}
+            >
+              <span className="nav-icon">📅</span>
+              <span className="nav-label">Decade Game</span>
+            </button>
+            <button 
+              className={`nav-item ${activeTab === 'country' ? 'active' : ''}`}
+              onClick={() => setActiveTab('country')}
+            >
+              <span className="nav-icon">🌍</span>
+              <span className="nav-label">Country Game</span>
+            </button>
+            <button 
+              className={`nav-item ${activeTab === 'higherlower' ? 'active' : ''}`}
+              onClick={() => setActiveTab('higherlower')}
+            >
+              <span className="nav-icon">📊</span>
+              <span className="nav-label">Higher or Lower</span>
+            </button>
+          </div>
+          
+          {/* Crossword/Trivia Section */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">Crossword & Trivia</h3>
+            <button 
+              className={`nav-item ${activeTab === 'crossword' ? 'active' : ''}`}
+              onClick={() => setActiveTab('crossword')}
+            >
+              <span className="nav-icon">📝</span>
+              <span className="nav-label">Music Crossword</span>
+            </button>
+          </div>
+        </nav>
+      </aside>
+      
+      {/* Main Content Area */}
+      <main className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <div className="container">
+          {!activeTab ? (
+            <>
+              {/* Landing Page Hero Section */}
+              <div className="hero-section">
+                <h1 className="hero-title">🎵 SoundCheck</h1>
+                <p className="hero-subtitle">Everything I thought I could build for music discovery and games</p>
+              </div>
 
-        {/* Show appropriate component */}
-        {activeTab === 'identify' && (
-          <>
+            {/* Feature Cards */}
+            <div className="features-grid">
+              <div 
+                className="feature-card"
+                onClick={() => setActiveTab('identify')}
+              >
+                <div className="feature-icon">🎤</div>
+                <h3 className="feature-title">Live Sample Detector</h3>
+                <p className="feature-badge">✨ First Ever</p>
+                <p className="feature-description">
+                  Figure out what song you're hearing by recording, uploading, or dropping a YouTube link. 
+                  See what samples it uses and what other tracks sampled it.
+                </p>
+                <div className="feature-highlight">
+                  <span>🔴 Live</span>
+                  <span>🎼 Sample Detection</span>
+                  <span>🔗 YouTube Support</span>
+                </div>
+              </div>
+
+              <div 
+                className="feature-card"
+                onClick={() => setActiveTab('crossword')}
+              >
+                <div className="feature-icon">📝</div>
+                <h3 className="feature-title">Daily Music Crosswords</h3>
+                <p className="feature-badge">🤖 AI Generated</p>
+                <p className="feature-description">
+                  Fresh music crosswords every day, made by AI. 
+                  Each one focuses on a different artist, era, or genre.
+                </p>
+                <div className="feature-highlight">
+                  <span>📅 Daily Puzzles</span>
+                  <span>🎨 Unique Themes</span>
+                  <span>🧠 AI Powered</span>
+                </div>
+              </div>
+
+              <div 
+                className="feature-card"
+                onClick={() => setActiveTab('heardle')}
+              >
+                <div className="feature-icon">🎮</div>
+                <h3 className="feature-title">Heardle Variations</h3>
+                <p className="feature-badge">🎯 Multiple Modes</p>
+                <p className="feature-description">
+                  See how well you know your music with different game modes: 
+                  Classic Heardle, Decade Game, Country Game, and Higher or Lower.
+                </p>
+                <div className="feature-highlight">
+                  <span>🎵 Classic Heardle</span>
+                  <span>📅 Decade Game</span>
+                  <span>🌍 Country Game</span>
+                  <span>📊 Higher or Lower</span>
+                </div>
+              </div>
+            </div>
+          </>
+          ) : (
+            <>
+            {/* Show appropriate component */}
+            {activeTab === 'identify' && (
+              <>
             <div className="mode-toggle">
           <button 
             className={`mode-btn ${inputMode === 'mic' ? 'active' : ''}`}
@@ -346,7 +448,7 @@ function App() {
                     <>
                       {result.samples.samples?.length > 0 && (
                         <div className="sample-list">
-                          <h4>Contains samples of ({result.samples.samples.length}):</h4>
+                          <h4>Uses samples from ({result.samples.samples.length}):</h4>
                           {(showAllSamples ? result.samples.samples : result.samples.samples.slice(0, 3)).map((sample, idx) => (
                             <div key={idx} className="sample-item">
                               <span className="sample-title">{sample.title}</span>
@@ -366,7 +468,7 @@ function App() {
                       
                       {result.samples.sampled_by?.length > 0 && (
                         <div className="sample-list">
-                          <h4>Was sampled in ({result.samples.sampled_by.length}):</h4>
+                          <h4>Got sampled in ({result.samples.sampled_by.length}):</h4>
                           {(showAllSampledBy ? result.samples.sampled_by : result.samples.sampled_by.slice(0, 3)).map((sample, idx) => (
                             <div key={idx} className="sample-item">
                               <span className="sample-title">{sample.title}</span>
@@ -386,7 +488,7 @@ function App() {
                     </>
                   ) : (
                     <div className="no-samples">
-                      <p>No sample information found for this track on WhoSampled.</p>
+                      <p>No sample info found for this track on WhoSampled.</p>
                     </div>
                   )}
                 </div>
@@ -394,7 +496,7 @@ function App() {
             ) : result.success === false ? (
               <div className="not-found">
                 <h2>❌ Song Not Found</h2>
-                <p>We couldn't identify this song. Try a different section or file.</p>
+                <p>Couldn't figure out what that is. Try a different clip or file.</p>
               </div>
             ) : (
               <div className="error-card">
@@ -404,14 +506,17 @@ function App() {
             )}
           </div>
         )}
-          </>
-        )}
-        {activeTab === 'heardle' && <Heardle />}
-        {activeTab === 'crossword' && <Crossword />}
-        {activeTab === 'decade' && <DecadeGame />}
-        {activeTab === 'country' && <CountryGame />}
-        {activeTab === 'higherlower' && <HigherLowerViews />}
-      </div>
+              </>
+            )}
+            {activeTab === 'heardle' && <Heardle />}
+            {activeTab === 'crossword' && <Crossword />}
+            {activeTab === 'decade' && <DecadeGame />}
+            {activeTab === 'country' && <CountryGame />}
+            {activeTab === 'higherlower' && <HigherLowerViews />}
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
