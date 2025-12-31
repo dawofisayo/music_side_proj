@@ -16,6 +16,10 @@ function App() {
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const timerRef = useRef(null);
+  
+  // Sample list expansion state
+  const [showAllSamples, setShowAllSamples] = useState(false);
+  const [showAllSampledBy, setShowAllSampledBy] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -92,6 +96,8 @@ function App() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setShowAllSamples(false);
+    setShowAllSampledBy(false);
 
     try {
       let response;
@@ -236,50 +242,96 @@ function App() {
 
         {result && (
           <div className="result-section">
-            {result.success && result.tracks?.length > 0 ? (
-              <>
-                <h2 className="results-header">
-                  ✅ Found {result.match_count} match{result.match_count > 1 ? 'es' : ''}!
-                </h2>
-                {result.tracks.map((track, index) => (
-                  <div key={index} className="track-card">
-                    <div className="track-header">
-                      <span className="match-badge">
-                        {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'} Match #{index + 1}
-                      </span>
-                      {track.score && <span className="score">{track.score}% match</span>}
-                    </div>
-                    <h2 className="track-title">{track.title}</h2>
-                    <p className="track-artist">{track.artist}</p>
-                    
-                    <div className="track-details">
-                      {track.album && (
-                        <div className="detail-row">
-                          <span className="detail-label">Album</span>
-                          <span className="detail-value">{track.album}</span>
-                        </div>
-                      )}
-                      {track.release_date && (
-                        <div className="detail-row">
-                          <span className="detail-label">Released</span>
-                          <span className="detail-value">{track.release_date}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {track.spotify_id && (
-                      <a 
-                        href={`https://open.spotify.com/track/${track.spotify_id}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="spotify-btn"
-                      >
-                        🎧 Open in Spotify
-                      </a>
+            {result.success && result.track ? (
+              <div className="result-grid">
+                <div className="track-card">
+                  <div className="track-header">
+                    <span className="match-badge">✅ Found it!</span>
+                    {result.track.score && <span className="score">{result.track.score}% match</span>}
+                  </div>
+                  <h2 className="track-title">{result.track.title}</h2>
+                  <p className="track-artist">{result.track.artist}</p>
+                  
+                  <div className="track-details">
+                    {result.track.album && (
+                      <div className="detail-row">
+                        <span className="detail-label">Album</span>
+                        <span className="detail-value">{result.track.album}</span>
+                      </div>
+                    )}
+                    {result.track.release_date && (
+                      <div className="detail-row">
+                        <span className="detail-label">Released</span>
+                        <span className="detail-value">{result.track.release_date}</span>
+                      </div>
                     )}
                   </div>
-                ))}
-              </>
+                  
+                  {result.track.spotify_id && (
+                    <a 
+                      href={`https://open.spotify.com/track/${result.track.spotify_id}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="spotify-btn"
+                    >
+                      🎧 Open in Spotify
+                    </a>
+                  )}
+                </div>
+                
+                {/* Sample Information - Always show */}
+                <div className="samples-section">
+                  <h3 className="samples-header">🎼 Sample Info</h3>
+                  
+                  {result.samples && (result.samples.samples?.length > 0 || result.samples.sampled_by?.length > 0) ? (
+                    <>
+                      {result.samples.samples?.length > 0 && (
+                        <div className="sample-list">
+                          <h4>Contains samples of ({result.samples.samples.length}):</h4>
+                          {(showAllSamples ? result.samples.samples : result.samples.samples.slice(0, 3)).map((sample, idx) => (
+                            <div key={idx} className="sample-item">
+                              <span className="sample-title">{sample.title}</span>
+                              <span className="sample-artist">by {sample.artist}</span>
+                            </div>
+                          ))}
+                          {result.samples.samples.length > 3 && (
+                            <button 
+                              className="see-all-btn"
+                              onClick={() => setShowAllSamples(!showAllSamples)}
+                            >
+                              {showAllSamples ? '▲ Show less' : `▼ See all ${result.samples.samples.length}`}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      
+                      {result.samples.sampled_by?.length > 0 && (
+                        <div className="sample-list">
+                          <h4>Was sampled in ({result.samples.sampled_by.length}):</h4>
+                          {(showAllSampledBy ? result.samples.sampled_by : result.samples.sampled_by.slice(0, 3)).map((sample, idx) => (
+                            <div key={idx} className="sample-item">
+                              <span className="sample-title">{sample.title}</span>
+                              <span className="sample-artist">by {sample.artist}</span>
+                            </div>
+                          ))}
+                          {result.samples.sampled_by.length > 3 && (
+                            <button 
+                              className="see-all-btn"
+                              onClick={() => setShowAllSampledBy(!showAllSampledBy)}
+                            >
+                              {showAllSampledBy ? '▲ Show less' : `▼ See all ${result.samples.sampled_by.length}`}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="no-samples">
+                      <p>No sample information found for this track on WhoSampled.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : result.success === false ? (
               <div className="not-found">
                 <h2>❌ Song Not Found</h2>

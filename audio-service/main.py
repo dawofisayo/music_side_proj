@@ -8,6 +8,9 @@ import os
 from acrcloud.recognizer import ACRCloudRecognizer
 import json
 
+from whosampled import search_whosampled
+
+
 load_dotenv()
 
 
@@ -86,28 +89,31 @@ async def recognize_from_youtube(url: str):
             result_dict = json.loads(result)
             
             if result_dict['status']['code'] == 0:
-                music_list = result_dict['metadata']['music']
-                tracks = []
-                for music in music_list:
-                    tracks.append({
-                        "title": music.get('title'),
-                        "artist": music['artists'][0]['name'] if music.get('artists') else None,
-                        "album": music.get('album', {}).get('name'),
-                        "release_date": music.get('release_date'),
-                        "duration": music.get('duration_ms'),
-                        "score": music.get('score', 100),
-                        "spotify_id": music.get('external_metadata', {}).get('spotify', {}).get('track', {}).get('id'),
-                        "isrc": music.get('external_ids', {}).get('isrc')
-                    })
+                music = result_dict['metadata']['music'][0]
+                track_info = {
+                    "title": music.get('title'),
+                    "artist": music['artists'][0]['name'] if music.get('artists') else None,
+                    "album": music.get('album', {}).get('name'),
+                    "release_date": music.get('release_date'),
+                    "duration": music.get('duration_ms'),
+                    "score": music.get('score', 100),
+                    "spotify_id": music.get('external_metadata', {}).get('spotify', {}).get('track', {}).get('id'),
+                    "isrc": music.get('external_ids', {}).get('isrc')
+                }
+                
+                # Get sample information from WhoSampled
+                sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+                
                 return {
                     "success": True,
-                    "tracks": tracks,
-                    "match_count": len(tracks)
+                    "track": track_info,
+                    "samples": sample_data
                 }
             else:
-                return {"success": False, "message": "Song not recognized", "code": result_dict['status']['code']}
+                return {"success": False, "message": "Song not recognized"}
                 
     except Exception as e:
+        print(f"[Main] Error: {e}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -123,33 +129,31 @@ async def recognize_audio_file(file: UploadFile = File(...)):
         
         ## check if we got a match
         if resultdict["status"]["code"] == 0:
-            # Extract ALL music matches from the result
-            music_list = resultdict["metadata"]["music"]
-            tracks = []
-            for music in music_list:
-                tracks.append({
-                    "title": music.get('title'),
-                    "artist": music['artists'][0]['name'] if music.get('artists') else None,
-                    "album": music.get('album', {}).get('name'),
-                    "release_date": music.get('release_date'),
-                    "duration": music.get('duration_ms'),
-                    "score": music.get('score', 100),
-                    "spotify_id": music.get('external_metadata', {}).get('spotify', {}).get('track', {}).get('id'),
-                    "isrc": music.get('external_ids', {}).get('isrc')
-                })
+            music = resultdict["metadata"]["music"][0]
+            track_info = {
+                "title": music.get('title'),
+                "artist": music['artists'][0]['name'] if music.get('artists') else None,
+                "album": music.get('album', {}).get('name'),
+                "release_date": music.get('release_date'),
+                "duration": music.get('duration_ms'),
+                "score": music.get('score', 100),
+                "spotify_id": music.get('external_metadata', {}).get('spotify', {}).get('track', {}).get('id'),
+                "isrc": music.get('external_ids', {}).get('isrc')
+            }
+            
+            # Get sample information from WhoSampled
+            sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+            
             return {
                 "success": True,
-                "tracks": tracks,
-                "match_count": len(tracks)
+                "track": track_info,
+                "samples": sample_data
             }
-        
         else:
-            return {"success": False,
-                    "message": "Song not recognized",
-                    "code": resultdict['status']['code']
-                    }
+            return {"success": False, "message": "Song not recognized"}
 
     except Exception as e:
+        print(f"[Main] Error: {e}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == "__main__":
