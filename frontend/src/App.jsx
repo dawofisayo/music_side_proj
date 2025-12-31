@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import './App.css';
 import Heardle from './components/Heardle';
+import Crossword from './components/Crossword';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -153,10 +154,16 @@ function App() {
           >
             🎮 Play Heardle
           </button>
+          <button 
+            className={`tab-btn ${activeTab === 'crossword' ? 'active' : ''}`}
+            onClick={() => setActiveTab('crossword')}
+          >
+            📝 Crossword
+          </button>
         </div>
 
         {/* Show appropriate component */}
-        {activeTab === 'identify' ? (
+        {activeTab === 'identify' && (
           <>
             <div className="mode-toggle">
           <button 
@@ -367,9 +374,9 @@ function App() {
           </div>
         )}
           </>
-        ) : (
-          <Heardle />
         )}
+        {activeTab === 'heardle' && <Heardle />}
+        {activeTab === 'crossword' && <Crossword />}
       </div>
     </div>
   );

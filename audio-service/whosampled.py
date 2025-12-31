@@ -121,52 +121,32 @@ def parse_list_page(html: str) -> list:
 
 async def search_whosampled(track_title: str, artist_name: str) -> dict:
     """Search WhoSampled for sample information using FlareSolverr"""
-    print(f"[WhoSampled] Looking up: {track_title} by {artist_name}", flush=True)
-    
-    # Clean up track title
     clean_title = clean_track_title(track_title)
-    if clean_title != track_title:
-        print(f"[WhoSampled] Cleaned title: {clean_title}", flush=True)
     
     artist_slug = slugify(artist_name)
     track_slug = slugify(clean_title)
     base_url = f"https://www.whosampled.com/{artist_slug}/{track_slug}"
     
-    # Fetch main page first
     main_url = f"{base_url}/"
-    print(f"[WhoSampled] Fetching: {main_url}", flush=True)
     main_html = fetch_with_flaresolverr(main_url)
     
     if not main_html:
         return {"sampled_by": [], "samples": []}
     
-    # Parse main page (gets up to 3 entries per section)
     data = parse_main_page(main_html)
     samples = data["samples"]
     sampled_by = data["sampled_by"]
     
-    print(f"[WhoSampled] Main page: {data['samples_count']} samples, {data['sampled_count']} sampled_by", flush=True)
-    
-    # If more than 3 samples exist, fetch the full samples page
     if data["samples_count"] > 3:
         samples_url = f"{base_url}/samples/"
-        print(f"[WhoSampled] Fetching samples page: {samples_url}", flush=True)
         samples_html = fetch_with_flaresolverr(samples_url)
         if samples_html:
             samples = parse_list_page(samples_html)
     
-    # If more than 3 sampled_by exist, fetch the full sampled page
     if data["sampled_count"] > 3:
         sampled_url = f"{base_url}/sampled/"
-        print(f"[WhoSampled] Fetching sampled page: {sampled_url}", flush=True)
         sampled_html = fetch_with_flaresolverr(sampled_url)
         if sampled_html:
             sampled_by = parse_list_page(sampled_html)
-    
-    print(f"[WhoSampled] Final - sampled_by: {len(sampled_by)}, samples: {len(samples)}", flush=True)
-    if samples:
-        print(f"[WhoSampled] Samples: {samples}", flush=True)
-    if sampled_by:
-        print(f"[WhoSampled] Sampled by: {sampled_by}", flush=True)
     
     return {"sampled_by": sampled_by, "samples": samples}

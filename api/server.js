@@ -1,9 +1,14 @@
+
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const FormData = require('form-data');
 const multer = require('multer');
 require('dotenv').config();
+
+const { getDailyCrossword } = require('./crossword');
+
 
 const app = express();
 const upload = multer();
@@ -70,6 +75,81 @@ app.post('/api/identify/youtube', async (req, res) => {
         error: 'Failed to identify YouTube audio',
         details: error.response?.data || error.message
       });
+    }
+  });
+
+app.get('/api/crossword/daily', async (req, res) => {
+    try {
+      const date = req.query.date || new Date().toISOString().split('T')[0];
+      const puzzle = await getDailyCrossword(date);
+      
+      // Don't send answers to frontend!
+      const puzzleForClient = {
+        date: puzzle.date,
+        template: puzzle.template,
+        clues: Object.entries(puzzle.words).reduce((acc, [key, value]) => {
+          acc[key] = { clue: value.clue, length: value.answer.length };
+          return acc;
+        }, {}),
+        theme: puzzle.theme
+      };
+      
+      res.json(puzzleForClient);
+    } catch (error) {
+      console.error('Error generating crossword:', error);
+      res.status(500).json({ 
+        error: 'Failed to generate crossword',
+        details: error.message || 'Unknown error'
+      });
+    }
+  });
+
+app.post('/api/crossword/check', async (req, res) => {
+    try {
+      const { date, answers } = req.body;
+      const puzzle = await getDailyCrossword(date);
+      
+      const results = {};
+      for (const [key, userAnswer] of Object.entries(answers)) {
+        if (!puzzle.words[key]) {
+          results[key] = {
+            correct: false,
+            answer: 'Unknown clue'
+          };
+          continue;
+        }
+        
+        const userAnswerTrimmed = (userAnswer || '').trim().toUpperCase().replace(/\s+/g, '');
+        const correctAnswer = puzzle.words[key].answer.toUpperCase().replace(/\s+/g, '');
+        
+        results[key] = {
+          correct: userAnswerTrimmed === correctAnswer,
+          answer: puzzle.words[key].answer
+        };
+      }
+      
+      res.json(results);
+    } catch (error) {
+      console.error('Error checking answers:', error);
+      res.status(500).json({ error: 'Failed to check answers', details: error.message });
+    }
+  });
+
+app.get('/api/crossword/reveal', async (req, res) => {
+    try {
+      const date = req.query.date || new Date().toISOString().split('T')[0];
+      const puzzle = await getDailyCrossword(date);
+      
+      // Return all answers
+      const answers = {};
+      Object.entries(puzzle.words).forEach(([key, value]) => {
+        answers[key] = value.answer;
+      });
+      
+      res.json(answers);
+    } catch (error) {
+      console.error('Error revealing answers:', error);
+      res.status(500).json({ error: 'Failed to reveal answers', details: error.message });
     }
   });
 
