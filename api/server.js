@@ -41,12 +41,37 @@ app.post('/api/identify', upload.single('audio'),  async (req, res) => {
     // return the result
     res.json(response.data);
     } catch (error) {
-        console.error('Error identifying audio:', error);
         res.status(500).json({ error: 'Failed to identify audio' , 
             details: error.response?.data || error.message
         });
     }
 });
+
+app.post('/api/identify/youtube', async (req, res) => {
+    try {
+      const { url } = req.body;
+      
+      if (!url) {
+        return res.status(400).json({ error: 'No YouTube URL provided' });
+      }
+  
+      const response = await axios.post(
+        `${AUDIO_SERVICE_URL}/recognize/youtube`,
+        null,
+        { 
+          params: { url },
+          timeout: 120000
+        }
+      );
+  
+      res.json(response.data);
+    } catch (error) {
+      res.status(500).json({ 
+        error: 'Failed to identify YouTube audio',
+        details: error.response?.data || error.message
+      });
+    }
+  });
 
 app.listen(3000, () => {
     console.log('API running on port 3000');
