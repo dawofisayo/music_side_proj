@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import './App.css';
 import Heardle from './components/Heardle';
 import Crossword from './components/Crossword';
+import DecadeGame from './components/Heardles/DecadeGame';
+
 
 function App() {
   const [file, setFile] = useState(null);
@@ -168,6 +170,12 @@ function App() {
             onClick={() => setActiveTab('crossword')}
           >
             📝 Music Crossword
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'decade' ? 'active' : ''}`}
+            onClick={() => setActiveTab('decade')}
+          >
+            🎮 Decade Game
           </button>
         </div>
 
@@ -386,6 +394,7 @@ function App() {
         )}
         {activeTab === 'heardle' && <Heardle />}
         {activeTab === 'crossword' && <Crossword />}
+        {activeTab === 'decade' && <DecadeGame />}
       </div>
     </div>
   );
