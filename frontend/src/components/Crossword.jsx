@@ -11,10 +11,21 @@ function Crossword() {
   const [revealedAnswers, setRevealedAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const gridRef = useRef(null);
+  const cluesRef = useRef({});
 
   useEffect(() => {
     loadPuzzle();
   }, []);
+
+  // Auto-scroll to active clue
+  useEffect(() => {
+    if (selectedClue && cluesRef.current[selectedClue]) {
+      cluesRef.current[selectedClue].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [selectedClue]);
 
   const loadPuzzle = async () => {
     try {
@@ -436,7 +447,7 @@ function Crossword() {
   return (
     <div className="crossword-container">
       <div className="crossword-header">
-        <h1>🎵 Daily Music Crossword</h1>
+        <h1>📝 Daily Music Crossword</h1>
         <p className="date">{new Date(puzzle.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         {puzzle.theme && <p className="theme">Today's Theme: {puzzle.theme.topic}</p>}
       </div>
@@ -447,42 +458,46 @@ function Crossword() {
         </div>
 
         <div className="clues-section">
-          <div className="clues-group">
-            <h3>ACROSS</h3>
-            {acrossClues.map(([key, data]) => (
-              <div
-                key={key}
-                className={`clue ${selectedClue === key ? 'active' : ''}`}
-                onClick={() => handleClueClick(key)}
-              >
-                <span className="clue-number">{key}</span>
-                <span className="clue-text">{data.clue}</span>
-                {results && results[key] && (
-                  <span className={`clue-result ${results[key].correct ? 'correct' : 'wrong'}`}>
-                    {results[key].correct ? '✓' : '✗'}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+          <div className="clues-section-inner">
+            <div className="clues-group">
+              <h3>ACROSS</h3>
+              {acrossClues.map(([key, data]) => (
+                <div
+                  key={key}
+                  ref={(el) => (cluesRef.current[key] = el)}
+                  className={`clue ${selectedClue === key ? 'active' : ''}`}
+                  onClick={() => handleClueClick(key)}
+                >
+                  <span className="clue-number">{key}</span>
+                  <span className="clue-text">{data.clue}</span>
+                  {results && results[key] && (
+                    <span className={`clue-result ${results[key].correct ? 'correct' : 'wrong'}`}>
+                      {results[key].correct ? '✓' : '✗'}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
 
-          <div className="clues-group">
-            <h3>DOWN</h3>
-            {downClues.map(([key, data]) => (
-              <div
-                key={key}
-                className={`clue ${selectedClue === key ? 'active' : ''}`}
-                onClick={() => handleClueClick(key)}
-              >
-                <span className="clue-number">{key}</span>
-                <span className="clue-text">{data.clue}</span>
-                {results && results[key] && (
-                  <span className={`clue-result ${results[key].correct ? 'correct' : 'wrong'}`}>
-                    {results[key].correct ? '✓' : '✗'}
-                  </span>
-                )}
-              </div>
-            ))}
+            <div className="clues-group">
+              <h3>DOWN</h3>
+              {downClues.map(([key, data]) => (
+                <div
+                  key={key}
+                  ref={(el) => (cluesRef.current[key] = el)}
+                  className={`clue ${selectedClue === key ? 'active' : ''}`}
+                  onClick={() => handleClueClick(key)}
+                >
+                  <span className="clue-number">{key}</span>
+                  <span className="clue-text">{data.clue}</span>
+                  {results && results[key] && (
+                    <span className={`clue-result ${results[key].correct ? 'correct' : 'wrong'}`}>
+                      {results[key].correct ? '✓' : '✗'}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

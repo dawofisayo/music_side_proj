@@ -160,7 +160,7 @@ function Heardle() {
 
   return (
     <div className="heardle-container">
-      <h1>🎵 Daily Heardle</h1>
+      <h1>🎮 Daily Heardle</h1>
       <p className="subtitle">Guess the song in 6 tries</p>
       
       {/* Hidden YouTube player */}

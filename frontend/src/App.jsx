@@ -136,9 +136,18 @@ function App() {
 
   return (
     <div className="App">
+      {/* Floating musical notes background effect */}
+      <div className="floating-notes" aria-hidden="true">
+        <span>♪</span>
+        <span>♫</span>
+        <span>♪</span>
+        <span>♫</span>
+        <span>♪</span>
+        <span>♫</span>
+      </div>
       <div className="container">
-        <h1>🎵 Music Identifier</h1>
-        <p className="subtitle">Record, upload, or paste a YouTube URL to identify any song</p>
+        <h1>🎵 Music Games</h1>
+        <p className="subtitle">Identify songs, play Heardle, and solve music crosswords</p>
         
         {/* Tab navigation */}
         <div className="tab-nav">
@@ -146,19 +155,19 @@ function App() {
             className={`tab-btn ${activeTab === 'identify' ? 'active' : ''}`}
             onClick={() => setActiveTab('identify')}
           >
-            🔍 Identify Music
+            🔍 Song Identifier
           </button>
           <button 
             className={`tab-btn ${activeTab === 'heardle' ? 'active' : ''}`}
             onClick={() => setActiveTab('heardle')}
           >
-            🎮 Play Heardle
+            🎮 Heardle
           </button>
           <button 
             className={`tab-btn ${activeTab === 'crossword' ? 'active' : ''}`}
             onClick={() => setActiveTab('crossword')}
           >
-            📝 Crossword
+            📝 Music Crossword
           </button>
         </div>
 

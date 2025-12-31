@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 // Daily themes
 const DAILY_THEMES = [
-  { topic: 'Taylor Swift', type: 'artist' },
+  { topic: 'Daniel Caesar', type: 'artist' },
   { topic: 'The Beatles', type: 'artist' },
   { topic: 'Drake', type: 'artist' },
   { topic: 'Beyoncé', type: 'artist' },
