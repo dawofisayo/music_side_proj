@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import './App.css';
+import Heardle from './components/Heardle';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -8,6 +9,7 @@ function App() {
   const [error, setError] = useState(null);
   const [inputMode, setInputMode] = useState('file');
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [activeTab, setActiveTab] = useState('identify');
   
   // Microphone recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -137,7 +139,26 @@ function App() {
         <h1>🎵 Music Identifier</h1>
         <p className="subtitle">Record, upload, or paste a YouTube URL to identify any song</p>
         
-        <div className="mode-toggle">
+        {/* Tab navigation */}
+        <div className="tab-nav">
+          <button 
+            className={`tab-btn ${activeTab === 'identify' ? 'active' : ''}`}
+            onClick={() => setActiveTab('identify')}
+          >
+            🔍 Identify Music
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'heardle' ? 'active' : ''}`}
+            onClick={() => setActiveTab('heardle')}
+          >
+            🎮 Play Heardle
+          </button>
+        </div>
+
+        {/* Show appropriate component */}
+        {activeTab === 'identify' ? (
+          <>
+            <div className="mode-toggle">
           <button 
             className={`mode-btn ${inputMode === 'mic' ? 'active' : ''}`}
             onClick={() => { setInputMode('mic'); setRecordedBlob(null); setRecordingTime(0); }}
@@ -344,6 +365,10 @@ function App() {
               </div>
             )}
           </div>
+        )}
+          </>
+        ) : (
+          <Heardle />
         )}
       </div>
     </div>

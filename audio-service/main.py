@@ -155,6 +155,46 @@ async def recognize_audio_file(file: UploadFile = File(...)):
     except Exception as e:
         print(f"[Main] Error: {e}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/youtube/audio/{youtube_id}")
+async def get_youtube_audio(youtube_id: str):
+    """Extract and stream audio from YouTube video"""
+    try:
+        url = f"https://www.youtube.com/watch?v={youtube_id}"
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_template = os.path.join(temp_dir, 'audio.%(ext)s')
+            
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': audio_template,
+                'quiet': True,
+                'no_warnings': True,
+                'noplaylist': True,
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                }]
+            }
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+            
+            audio_file = os.path.join(temp_dir, 'audio.mp3')
+            
+            if not os.path.exists(audio_file):
+                raise HTTPException(status_code=500, detail="Audio file not found")
+            
+            from fastapi.responses import FileResponse
+            return FileResponse(
+                audio_file,
+                media_type="audio/mpeg",
+                filename=f"{youtube_id}.mp3"
+            )
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == "__main__":
     import uvicorn
