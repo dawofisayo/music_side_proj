@@ -7,9 +7,6 @@ const FormData = require('form-data');
 const multer = require('multer');
 require('dotenv').config();
 
-const { getDailyCrossword } = require('./crossword');
-
-
 const app = express();
 const upload = multer();
 
@@ -17,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const AUDIO_SERVICE_URL = process.env.AUDIO_SERVICE_URL || 'http://localhost:8001';
+const CROSSWORD_SERVICE_URL = process.env.CROSSWORD_SERVICE_URL || 'http://localhost:8003';
 
 
 app.get('/api/health', (req, res) => {
@@ -81,75 +79,62 @@ app.post('/api/identify/youtube', async (req, res) => {
 app.get('/api/crossword/daily', async (req, res) => {
     try {
       const date = req.query.date || new Date().toISOString().split('T')[0];
-      const puzzle = await getDailyCrossword(date);
       
-      // Don't send answers to frontend!
-      const puzzleForClient = {
-        date: puzzle.date,
-        template: puzzle.template,
-        clues: Object.entries(puzzle.words).reduce((acc, [key, value]) => {
-          acc[key] = { clue: value.clue, length: value.answer.length };
-          return acc;
-        }, {}),
-        theme: puzzle.theme
-      };
+      // Call Python crossword service
+      const response = await axios.get(`${CROSSWORD_SERVICE_URL}/daily`, {
+        params: { date },
+        timeout: 60000  // 60 second timeout for generation
+      });
       
-      res.json(puzzleForClient);
+      res.json(response.data);
     } catch (error) {
-      console.error('Error generating crossword:', error);
+      console.error('Error generating crossword:', error.response?.data || error.message);
       res.status(500).json({ 
         error: 'Failed to generate crossword',
-        details: error.message || 'Unknown error'
+        details: error.response?.data?.detail || error.message || 'Unknown error'
       });
     }
   });
 
-app.post('/api/crossword/check', async (req, res) => {
+  app.post('/api/crossword/check', async (req, res) => {
     try {
       const { date, answers } = req.body;
-      const puzzle = await getDailyCrossword(date);
       
-      const results = {};
-      for (const [key, userAnswer] of Object.entries(answers)) {
-        if (!puzzle.words[key]) {
-          results[key] = {
-            correct: false,
-            answer: 'Unknown clue'
-          };
-          continue;
-        }
-        
-        const userAnswerTrimmed = (userAnswer || '').trim().toUpperCase().replace(/\s+/g, '');
-        const correctAnswer = puzzle.words[key].answer.toUpperCase().replace(/\s+/g, '');
-        
-        results[key] = {
-          correct: userAnswerTrimmed === correctAnswer,
-          answer: puzzle.words[key].answer
-        };
-      }
+      // Call Python crossword service to check answers
+      const response = await axios.post(`${CROSSWORD_SERVICE_URL}/check`, 
+        { date, answers },
+        { timeout: 10000 }
+      );
       
-      res.json(results);
+      // Return just the results object, not the whole response
+      res.json(response.data.results);
     } catch (error) {
-      console.error('Error checking answers:', error);
-      res.status(500).json({ error: 'Failed to check answers', details: error.message });
+      console.error('Error checking answers:', error.response?.data || error.message);
+      res.status(error.response?.status || 500).json({ 
+        error: 'Failed to check answers',
+        details: error.response?.data?.detail || error.message
+      });
     }
   });
 
 app.get('/api/crossword/reveal', async (req, res) => {
     try {
       const date = req.query.date || new Date().toISOString().split('T')[0];
-      const puzzle = await getDailyCrossword(date);
       
-      // Return all answers
-      const answers = {};
-      Object.entries(puzzle.words).forEach(([key, value]) => {
-        answers[key] = value.answer;
+      // Call Python crossword service to reveal answers
+      const response = await axios.get(`${CROSSWORD_SERVICE_URL}/reveal`, {
+        params: { date },
+        timeout: 10000
       });
       
-      res.json(answers);
+      // Return just the answers object to match frontend expectations
+      res.json(response.data.answers);
     } catch (error) {
-      console.error('Error revealing answers:', error);
-      res.status(500).json({ error: 'Failed to reveal answers', details: error.message });
+      console.error('Error revealing answers:', error.response?.data || error.message);
+      res.status(error.response?.status || 500).json({ 
+        error: 'Failed to reveal answers',
+        details: error.response?.data?.detail || error.message
+      });
     }
   });
 

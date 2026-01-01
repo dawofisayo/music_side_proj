@@ -49,25 +49,36 @@ function Crossword() {
     }
   };
 
-  // Convert grid position to clue ID
+  // Convert grid position to clue ID (handles intersections with multiple IDs)
   const getCellClue = (row, col) => {
     if (!puzzle || !puzzle.template || !puzzle.template.grid) return null;
     if (row < 0 || row >= puzzle.template.grid.length) return null;
     if (col < 0 || col >= puzzle.template.grid[row].length) return null;
     const cell = puzzle.template.grid[row][col];
     if (cell === 'X') return null;
+    // If cell has multiple IDs (intersection), return array
+    if (cell.includes('/')) {
+      return cell.split('/');
+    }
     return cell;
   };
 
   // Get position within word for a cell
   const getCellPosition = (row, col, clueId) => {
-    if (!puzzle || !puzzle.template || !puzzle.template.positions) return 0;
+    if (!puzzle || !puzzle.template || !puzzle.template.positions) return -1;
     const position = puzzle.template.positions[clueId];
-    if (!position) return 0;
+    if (!position) return -1;
     
-    if (position.direction === 'across') {
+    // Check if this cell is actually part of this word
+    if (position.direction === 'across' || position.direction === 'horizontal') {
+      // For across: row must match exactly, col must be in range
+      if (row !== position.row) return -1;
+      if (col < position.col || col >= position.col + position.length) return -1;
       return col - position.col;
     } else {
+      // For down: col must match exactly, row must be in range
+      if (col !== position.col) return -1;
+      if (row < position.row || row >= position.row + position.length) return -1;
       return row - position.row;
     }
   };
@@ -75,14 +86,34 @@ function Crossword() {
   // Handle cell click
   const handleCellClick = (row, col) => {
     const clueId = getCellClue(row, col);
+    console.log(`Clicked (${row},${col}), cell contains:`, clueId);
     if (!clueId) return;
     
-    // If clicking same cell, toggle direction
-    if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
-      setDirection(direction === 'across' ? 'down' : 'across');
+    // Handle intersection cells (clueId is an array)
+    if (Array.isArray(clueId)) {
+      // If clicking same cell, toggle between the two clues
+      if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
+        const currentIndex = clueId.indexOf(selectedClue);
+        const nextIndex = (currentIndex + 1) % clueId.length;
+        setSelectedClue(clueId[nextIndex]);
+        const pos = puzzle.template.positions[clueId[nextIndex]];
+        setDirection(pos?.direction || 'across');
+      } else {
+        // Select first clue (prefer across)
+        const acrossClue = clueId.find(id => id.includes('A'));
+        setSelectedCell({ row, col });
+        setSelectedClue(acrossClue || clueId[0]);
+        const pos = puzzle.template.positions[acrossClue || clueId[0]];
+        setDirection(pos?.direction || 'across');
+      }
     } else {
-      setSelectedCell({ row, col });
-      setSelectedClue(clueId);
+      // Single clue in this cell
+      if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
+        setDirection(direction === 'across' ? 'down' : 'across');
+      } else {
+        setSelectedCell({ row, col });
+        setSelectedClue(clueId);
+      }
     }
   };
 
@@ -97,6 +128,8 @@ function Crossword() {
     
     // Verify this cell is actually part of the selected clue
     const position = getCellPosition(row, col, clueId);
+    console.log(`Cell (${row},${col}) for clue ${clueId}: position = ${position}, word length = ${pos.length}`);
+
     if (position < 0 || position >= pos.length) return; // Cell is not part of this word
     
     if (e.key.length === 1 && e.key.match(/[a-zA-Z0-9]/)) {
@@ -197,22 +230,22 @@ function Crossword() {
     const nextPosition = currentPosition + 1;
     
     if (nextPosition < pos.length) {
-      if (pos.direction === 'across') {
+      if (pos.direction === 'across' || pos.direction === 'horizontal') {  // ← ADD horizontal check
         const nextCol = pos.col + nextPosition;
-        if (nextCol < (puzzle.template.grid[0]?.length || 7)) {
+        if (nextCol < (puzzle.template.grid[0]?.length || 15)) {
           setSelectedCell({ row, col: nextCol });
           setSelectedClue(clueId);
         }
-      } else {
+      } else {  // vertical or down
         const nextRow = pos.row + nextPosition;
-        if (nextRow < (puzzle.template.grid?.length || 7)) {
+        if (nextRow < (puzzle.template.grid?.length || 15)) {
           setSelectedCell({ row: nextRow, col });
           setSelectedClue(clueId);
         }
       }
     }
   };
-
+  
   const moveToPrevCell = (row, col, clueId) => {
     if (!puzzle || !puzzle.template || !puzzle.template.positions) return;
     const pos = puzzle.template.positions[clueId];
@@ -222,13 +255,13 @@ function Crossword() {
     const prevPosition = currentPosition - 1;
     
     if (prevPosition >= 0) {
-      if (pos.direction === 'across') {
+      if (pos.direction === 'across' || pos.direction === 'horizontal') {  // ← ADD horizontal check
         const prevCol = pos.col + prevPosition;
         if (prevCol >= 0) {
           setSelectedCell({ row, col: prevCol });
           setSelectedClue(clueId);
         }
-      } else {
+      } else {  // vertical or down
         const prevRow = pos.row + prevPosition;
         if (prevRow >= 0) {
           setSelectedCell({ row: prevRow, col });
@@ -321,86 +354,86 @@ function Crossword() {
                   return <div key={colIdx} className="grid-cell blocked" />;
                 }
                 
-                const clueId = cell;
-                const position = getCellPosition(rowIdx, colIdx, clueId);
-                const isRevealed = revealedAnswers[clueId] !== undefined;
-                const pos = puzzle.template.positions?.[clueId];
-                const answerLength = pos ? pos.length : 0;
+                // Handle intersection cells with multiple clue IDs
+                const clueIds = cell.includes('/') ? cell.split('/') : [cell];
                 
-                // Get answer, ensuring it's the correct length
-                let answer = isRevealed ? revealedAnswers[clueId] : (userAnswers[clueId] || '');
-                // Pad answer to correct length if needed
-                if (answer.length < answerLength) {
-                  answer = answer.padEnd(answerLength, ' ');
-                }
-                // Trim to correct length if too long (shouldn't happen, but safety check)
-                if (answer.length > answerLength) {
-                  answer = answer.substring(0, answerLength);
-                }
-                
-                const letter = answer && position >= 0 && position < answer.length ? answer[position] : '';
                 const isSelected = selectedCell && selectedCell.row === rowIdx && selectedCell.col === colIdx;
-                const isInSelectedWord = selectedClue === clueId;
+                const isInSelectedWord = clueIds.includes(selectedClue);
+                
+                // Determine which clue to use for this cell
+                // CRITICAL: Only show letters from clues that actually use this cell
+                let displayClueId = null;
+                let letter = '';
+                
+                // Priority: selected clue (if it uses this cell) > first clue with an answer > first clue
+                if (isInSelectedWord) {
+                  // Verify the selected clue actually uses this cell by checking position
+                  const selectedPos = puzzle.template.positions?.[selectedClue];
+                  if (selectedPos) {
+                    const checkPos = getCellPosition(rowIdx, colIdx, selectedClue);
+                    if (checkPos >= 0 && checkPos < selectedPos.length) {
+                      displayClueId = selectedClue;
+                    }
+                  }
+                }
+                
+                // If selected clue doesn't use this cell, find another clue that does
+                if (!displayClueId) {
+                  for (const cid of clueIds) {
+                    const cpos = puzzle.template.positions?.[cid];
+                    if (cpos) {
+                      const checkPos = getCellPosition(rowIdx, colIdx, cid);
+                      if (checkPos >= 0 && checkPos < cpos.length) {
+                        // This clue uses this cell
+                        if (userAnswers[cid] || revealedAnswers[cid]) {
+                          displayClueId = cid;
+                          break;
+                        } else if (!displayClueId) {
+                          displayClueId = cid; // Use first valid clue as fallback
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                // Only display letter if we found a valid clue for this cell
+                if (displayClueId) {
+                  const position = getCellPosition(rowIdx, colIdx, displayClueId);
+                  const isRevealed = revealedAnswers[displayClueId] !== undefined;
+                  const pos = puzzle.template.positions?.[displayClueId];
+                  const answerLength = pos ? pos.length : 0;
+                  
+                  // Get answer, ensuring it's the correct length
+                  let answer = isRevealed ? revealedAnswers[displayClueId] : (userAnswers[displayClueId] || '');
+                  // Pad answer to correct length if needed
+                  if (answer.length < answerLength) {
+                    answer = answer.padEnd(answerLength, ' ');
+                  }
+                  // Trim to correct length if too long (shouldn't happen, but safety check)
+                  if (answer.length > answerLength) {
+                    answer = answer.substring(0, answerLength);
+                  }
+                  
+                  letter = answer && position >= 0 && position < answer.length ? answer[position] : '';
+                }
                 
                 // Find all words that start at this cell
                 const wordsStartingHere = [];
                 if (puzzle.template.positions) {
-                  Object.entries(puzzle.template.positions).forEach(([id, pos]) => {
-                    if (pos.row === rowIdx && pos.col === colIdx) {
+                  // Check all clue IDs that might start at this cell
+                  clueIds.forEach(id => {
+                    const pos = puzzle.template.positions[id];
+                    if (pos && pos.row === rowIdx && pos.col === colIdx) {
                       wordsStartingHere.push(id);
                     }
                   });
                 }
                 
-                // Get letter from any word that uses this cell (prioritize selected word, then revealed)
-                let displayLetter = letter;
-                if (!displayLetter && selectedClue) {
-                  const selectedPos = puzzle.template.positions?.[selectedClue];
-                  if (selectedPos) {
-                    const selectedPosition = getCellPosition(rowIdx, colIdx, selectedClue);
-                    if (selectedPosition >= 0 && selectedPosition < selectedPos.length) {
-                      let selectedAnswer = revealedAnswers[selectedClue] || userAnswers[selectedClue] || '';
-                      // Ensure answer is correct length
-                      if (selectedAnswer.length < selectedPos.length) {
-                        selectedAnswer = selectedAnswer.padEnd(selectedPos.length, ' ');
-                      }
-                      if (selectedAnswer.length > selectedPos.length) {
-                        selectedAnswer = selectedAnswer.substring(0, selectedPos.length);
-                      }
-                      if (selectedAnswer && selectedPosition >= 0 && selectedPosition < selectedAnswer.length) {
-                        displayLetter = selectedAnswer[selectedPosition];
-                      }
-                    }
-                  }
-                }
-                // If still no letter, try any word that uses this cell
-                if (!displayLetter) {
-                  const allClues = getAllCluesAtCell(rowIdx, colIdx);
-                  for (const cid of allClues) {
-                    const cpos = puzzle.template.positions?.[cid];
-                    if (cpos) {
-                      const cposition = getCellPosition(rowIdx, colIdx, cid);
-                      if (cposition >= 0 && cposition < cpos.length) {
-                        let canswer = revealedAnswers[cid] || userAnswers[cid] || '';
-                        // Ensure answer is correct length
-                        if (canswer.length < cpos.length) {
-                          canswer = canswer.padEnd(cpos.length, ' ');
-                        }
-                        if (canswer.length > cpos.length) {
-                          canswer = canswer.substring(0, cpos.length);
-                        }
-                        if (canswer && cposition >= 0 && cposition < canswer.length) {
-                          displayLetter = canswer[cposition];
-                          break;
-                        }
-                      }
-                    }
-                  }
-                }
+                const displayLetter = letter;
                 
-                const isCorrect = results && results[clueId]?.correct;
-                const isWrong = results && results[clueId] && !results[clueId].correct;
-                const cellIsRevealed = revealedAnswers[clueId] !== undefined;
+                const isCorrect = displayClueId && results && results[displayClueId]?.correct;
+                const isWrong = displayClueId && results && results[displayClueId] && !results[displayClueId].correct;
+                const cellIsRevealed = displayClueId && revealedAnswers[displayClueId] !== undefined;
                 
                 return (
                   <div
