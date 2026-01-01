@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { API_BASE_URL } from '../config';
 import './Crossword.css';
 
 function Crossword() {
@@ -30,7 +29,7 @@ function Crossword() {
 
   const loadPuzzle = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/crossword/daily`);
+      const response = await fetch('http://localhost:3000/api/crossword/daily');
       const data = await response.json();
       setPuzzle(data);
       
@@ -296,7 +295,7 @@ function Crossword() {
 
   const checkAnswers = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/crossword/check`, {
+      const response = await fetch('http://localhost:3000/api/crossword/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -316,7 +315,7 @@ function Crossword() {
     if (!puzzle) return;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/api/crossword/reveal?date=${puzzle.date}`);
+      const response = await fetch(`http://localhost:3000/api/crossword/reveal?date=${puzzle.date}`);
       const revealed = await response.json();
       
       setRevealedAnswers(revealed);
