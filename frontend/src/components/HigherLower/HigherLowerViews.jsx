@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config';
 import { SONG_DATABASE } from '../../data/songs';
 import './HigherLower.css';
 
@@ -53,7 +54,7 @@ function HigherLower() {
   // Fetch YouTube views
   const fetchViews = async (song) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/youtube/views/${song.youtubeId}`);
+      const response = await fetch(`${API_BASE_URL}/api/youtube/views/${song.youtubeId}`);
       const data = await response.json();
       return data.views;
     } catch (error) {

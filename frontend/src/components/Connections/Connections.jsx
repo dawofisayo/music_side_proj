@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config';
 import './Connections.css';
 
 function Connections() {
@@ -33,7 +34,7 @@ function Connections() {
   */
   const loadPuzzle = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/connections/daily');
+      const response = await fetch(`${API_BASE_URL}/api/connections/daily`);
       const data = await response.json();
 
       // Check if the response has an error or is missing groups

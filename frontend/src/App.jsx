@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import './App.css';
+import { API_BASE_URL } from './config';
 import Heardle from './components/Heardle';
 import Crossword from './components/Crossword';
 import DecadeGame from './components/Heardles/DecadeGame';
@@ -113,19 +114,19 @@ function App() {
       if (inputMode === 'file') {
         const formData = new FormData();
         formData.append('audio', file);
-        response = await fetch('http://localhost:3000/api/identify', {
+        response = await fetch(`${API_BASE_URL}/api/identify`, {
           method: 'POST',
           body: formData,
         });
       } else if (inputMode === 'mic') {
         const formData = new FormData();
         formData.append('audio', recordedBlob, 'recording.webm');
-        response = await fetch('http://localhost:3000/api/identify', {
+        response = await fetch(`${API_BASE_URL}/api/identify`, {
           method: 'POST',
           body: formData,
         });
       } else {
-        response = await fetch('http://localhost:3000/api/identify/youtube', {
+        response = await fetch(`${API_BASE_URL}/api/identify/youtube`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: youtubeUrl }),
