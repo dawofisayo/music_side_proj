@@ -21,7 +21,7 @@ daily_answers: Dict[str, Dict[str, str]] = {}
 # Daily themes (matching the Node.js version)
 DAILY_THEMES = [
     {"topic": "Daniel Caesar", "type": "artist"},
-    {"topic": "The Beatles", "type": "artist"},
+    {"topic": "SZA", "type": "artist"},
     {"topic": "Drake", "type": "artist"},
     {"topic": "Beyoncé", "type": "artist"},
     {"topic": "90s Hip Hop", "type": "era"},
