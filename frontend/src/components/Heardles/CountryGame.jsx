@@ -40,12 +40,13 @@ function CountryGame() {
   useEffect(() => {
     if (!dailySong) return;
 
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    window.onYouTubeIframeAPIReady = () => {
+    const createPlayer = () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+        playerRef.current = null;
+      }
+      setPlayerReady(false);
+      
       playerRef.current = new window.YT.Player('country-player', {
         height: '0',
         width: '0',
@@ -67,10 +68,27 @@ function CountryGame() {
       });
     };
 
+    // Check if YouTube API is already loaded
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      // Load YouTube API if not already loaded
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      window.onYouTubeIframeAPIReady = () => {
+        createPlayer();
+      };
+    }
+
     return () => {
       if (playerRef.current) {
         playerRef.current.destroy();
+        playerRef.current = null;
       }
+      setPlayerReady(false);
     };
   }, [dailySong]);
 
@@ -126,6 +144,25 @@ function CountryGame() {
   
   const isCorrect = () => {
     return userGuess === dailySong.country;
+  };
+
+  const resetGame = () => {
+    // Destroy player first
+    if (playerRef.current) {
+      playerRef.current.destroy();
+      playerRef.current = null;
+    }
+    
+    // Reset all state
+    const randomSong = SONG_DATABASE[Math.floor(Math.random() * SONG_DATABASE.length)];
+    setDailySong(randomSong);
+    setUserGuess(null);
+    setShowResult(false);
+    setPlayCount(0);
+    setIsPlaying(false);
+    setPlayerReady(false);
+    setSearchQuery('');
+    setSearchResults([]);
   };
 
   if (!dailySong) {
@@ -217,7 +254,7 @@ function CountryGame() {
 
           <button 
             className="play-again-button"
-            onClick={() => window.location.reload()}
+            onClick={resetGame}
           >
             Play Again
           </button>
