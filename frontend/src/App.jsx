@@ -5,6 +5,7 @@ import Crossword from './components/Crossword';
 import DecadeGame from './components/Heardles/DecadeGame';
 import CountryGame from './components/Heardles/CountryGame';
 import HigherLowerViews from './components/HigherLower/HigherLowerViews';
+import Connections from './components/Connections/Connections';
 
 
 function App() {
@@ -173,7 +174,7 @@ function App() {
               onClick={() => setActiveTab('identify')}
             >
               <span className="nav-icon">🎤</span>
-              <span className="nav-label">Song Identifier</span>
+              <span className="nav-label">Sample Detector</span>
             </button>
           </div>
           
@@ -219,6 +220,13 @@ function App() {
             >
               <span className="nav-icon">📝</span>
               <span className="nav-label">Music Crossword</span>
+            </button>
+            <button 
+              className={`nav-item ${activeTab === 'connections' ? 'active' : ''}`}
+              onClick={() => setActiveTab('connections')}
+            >
+              <span className="nav-icon">🔗</span>
+              <span className="nav-label">Connections</span>
             </button>
           </div>
         </nav>
@@ -513,6 +521,7 @@ function App() {
             {activeTab === 'decade' && <DecadeGame />}
             {activeTab === 'country' && <CountryGame />}
             {activeTab === 'higherlower' && <HigherLowerViews />}
+            {activeTab === 'connections' && <Connections />}
             </>
           )}
         </div>

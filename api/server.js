@@ -5,10 +5,16 @@ const cors = require('cors');
 const axios = require('axios');
 const FormData = require('form-data');
 const multer = require('multer');
+const { OpenAI } = require('openai');
 require('dotenv').config();
 
 const app = express();
 const upload = multer();
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 app.use(cors());
 app.use(express.json());
@@ -156,6 +162,101 @@ app.get('/api/youtube/views/:videoId', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch views' });
     }
   });
+
+// Connections daily puzzle
+app.get('/api/connections/daily', async (req, res) => {
+  try {
+    const date = req.query.date || new Date().toISOString().split('T')[0];
+    
+    // Check cache first
+    const cacheKey = `connections_${date}`;
+    if (connectionsCache.has(cacheKey)) {
+      return res.json(connectionsCache.get(cacheKey));
+    }
+    
+    // Generate new puzzle
+    const theme = getDailyMusicTheme(date);
+    const puzzle = await generateConnectionsPuzzle(theme);
+    
+    // Cache it
+    connectionsCache.set(cacheKey, puzzle);
+    
+    res.json(puzzle);
+  } catch (error) {
+    console.error('Error generating connections:', error);
+    res.status(500).json({ error: 'Failed to generate puzzle' });
+  }
+});
+
+// Simple cache
+const connectionsCache = new Map();
+
+function getDailyMusicTheme(date) {
+  const themes = [
+    'Pop Music',
+    'Hip Hop',
+    'Rock Music', 
+    '2010s Music',
+    '90s Music',
+    'R&B',
+    'Country Music',
+    'EDM',
+  ];
+  const dateNum = new Date(date).getDate();
+  return themes[dateNum % themes.length];
+}
+
+async function generateConnectionsPuzzle(theme) {
+  const prompt = `Create a Connections-style puzzle about ${theme}.
+
+Generate 4 categories, each with 4 items (songs, artists, albums, etc.).
+
+RULES:
+1. Each category should be distinct but not too obvious
+2. Items should only fit in ONE category (no overlap!)
+3. Mix difficulty levels (1=easy, 4=hardest)
+4. All items must be real and verifiable
+
+DIFFICULTY GUIDE:
+- Level 1 (Easy): Obvious grouping like "Songs by Taylor Swift"
+- Level 2 (Medium): Requires some thought like "Songs from 2015"
+- Level 3 (Hard): Trickier like "Songs with colors in the title"
+- Level 4 (Hardest): Very subtle like "Songs that samples the same artist"
+
+Return ONLY valid JSON:
+{
+  "groups": [
+    {
+      "category": "Category name",
+      "items": ["Item 1", "Item 2", "Item 3", "Item 4"],
+      "difficulty": 1
+    },
+    ...
+  ]
+}`;
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini', // Better for creative tasks
+    messages: [
+      { 
+        role: 'system', 
+        content: 'You create Connections puzzles. Categories must be distinct with no overlap between items. Output only valid JSON.' 
+      },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.8, // Higher for creativity
+  });
+
+  const responseText = completion.choices[0].message.content;
+  const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  const data = JSON.parse(cleanedText);
+  
+  return {
+    date: new Date().toISOString().split('T')[0],
+    theme: theme,
+    groups: data.groups
+  };
+}
 
 app.listen(3000, () => {
     console.log('API running on port 3000');
