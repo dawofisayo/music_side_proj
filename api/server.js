@@ -19,7 +19,7 @@ const openai = new OpenAI({
 app.use(cors());
 app.use(express.json());
 
-const AUDIO_SERVICE_URL = process.env.AUDIO_SERVICE_URL || 'http://localhost:8001';
+const AUDIO_SERVICE_URL = process.env.AUDIO_SERVICE_URL || 'https://musicsideproj-audio-service.up.railway.app';
 const CROSSWORD_SERVICE_URL = process.env.CROSSWORD_SERVICE_URL || 'http://localhost:8003';
 
 
