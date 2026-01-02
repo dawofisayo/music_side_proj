@@ -1,0 +1,234 @@
+.challenge-setup-v2 {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .challenge-setup-v2 h2 {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .section-label {
+    display: block;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .helper {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin: -0.5rem 0 1.5rem 0;
+  }
+  
+  /* Question Section */
+  .question-section {
+    margin-bottom: 3rem;
+  }
+  
+  .question-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .question-chip {
+    padding: 0.75rem 1.25rem;
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    color: #495057;
+  }
+  
+  .question-chip:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+  }
+  
+  .question-chip.selected {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+  }
+  
+  .custom-question-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .custom-question-input:focus {
+    outline: none;
+    border-color: #0056b3;
+  }
+  
+  /* Answers Section */
+  .answers-section {
+    margin-bottom: 3rem;
+  }
+  
+  .answer-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .answer-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .answer-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #e7f3ff;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    font-weight: 600;
+    color: #007bff;
+    flex-shrink: 0;
+  }
+  
+  .answer-input {
+    flex: 1;
+    padding: 0.875rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  
+  .answer-input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .answer-input::placeholder {
+    color: #adb5bd;
+  }
+  
+  .remove-btn {
+    padding: 0.5rem 0.75rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  
+  .remove-btn:hover {
+    background: #c82333;
+  }
+  
+  .add-answer-btn {
+    padding: 0.75rem 1.5rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .add-answer-btn:hover {
+    background: #0056b3;
+  }
+  
+  .answer-tip {
+    padding: 1rem;
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #856404;
+  }
+  
+  /* Preview Section */
+  .preview-section {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .preview-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.75rem;
+  }
+  
+  .preview-question {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.75rem;
+  }
+  
+  .preview-answers {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  
+  .error-message {
+    padding: 1rem;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c33;
+    margin-bottom: 1rem;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .back-btn {
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .back-btn:hover {
+    background: #5a6268;
+  }
+  
+  .continue-btn {
+    padding: 0.75rem 1.5rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .continue-btn:hover {
+    background: #218838;
+  }

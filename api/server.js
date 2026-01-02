@@ -163,6 +163,31 @@ app.get('/api/youtube/views/:videoId', async (req, res) => {
     }
   });
 
+app.get('/api/youtube/metadata/:videoId', async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const response = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`
+    );
+    
+    if (!response.data.items || response.data.items.length === 0) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    const video = response.data.items[0];
+    
+    res.json({
+      title: video.snippet.title,
+      channelTitle: video.snippet.channelTitle,
+      thumbnail: video.snippet.thumbnails.medium.url,
+      duration: video.contentDetails.duration
+    });
+  } catch (error) {
+    console.error('YouTube API error:', error);
+    res.status(500).json({ error: 'Failed to fetch video metadata' });
+  }
+});
+
 // Connections daily puzzle
 app.get('/api/connections/daily', async (req, res) => {
   try {
@@ -200,7 +225,7 @@ function getDailyMusicTheme(date) {
     '90s Music',
     'R&B',
     'Country Music',
-    'EDM',
+    'Afrobeats',
   ];
   const dateNum = new Date(date).getDate();
   return themes[dateNum % themes.length];
@@ -257,6 +282,67 @@ Return ONLY valid JSON:
     groups: data.groups
   };
 }
+
+// Generate unique Heardle ID
+function generateHeardleId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let id = 'h_';
+  for (let i = 0; i < 10; i++) {
+    id += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return id;
+}
+
+// In-memory storage for now (replace with database later)
+const heardles = new Map();
+
+// Create a new Heardle
+app.post('/api/heardles', (req, res) => {
+  try {
+    const heardleData = req.body;
+    
+    // Generate unique ID
+    const id = generateHeardleId();
+    
+    // Create heardle object
+    const heardle = {
+      id,
+      ...heardleData,
+      createdAt: new Date().toISOString(),
+      stats: {
+        plays: 0,
+        completions: 0,
+        totalAttempts: 0
+      },
+      isPublic: true,
+      status: 'active'
+    };
+    
+    // Store it
+    heardles.set(id, heardle);
+    
+    // Return the ID - frontend will construct the URL using its own origin
+    res.json({ 
+      id,
+      path: `/heardle/${id}`
+    });
+  } catch (error) {
+    console.error('Error creating heardle:', error);
+    res.status(500).json({ error: 'Failed to create Heardle' });
+  }
+});
+
+// Get a Heardle by ID
+app.get('/api/heardles/:id', (req, res) => {
+  const { id } = req.params;
+  const heardle = heardles.get(id);
+  
+  if (!heardle) {
+    return res.status(404).json({ error: 'Heardle not found' });
+  }
+  
+  res.json(heardle);
+});
 
 app.listen(3000, () => {
     console.log('API running on port 3000');

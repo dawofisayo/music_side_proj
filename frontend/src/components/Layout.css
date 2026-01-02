@@ -1,0 +1,21 @@
+/* Layout.css - Add any layout-specific styles if needed */
+.sidebar-logo-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.sidebar-logo-link:hover {
+  color: inherit;
+}
+
+/* Feature card links */
+a.feature-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+a.feature-card:hover {
+  color: inherit;
+}
+

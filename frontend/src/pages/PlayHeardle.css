@@ -1,0 +1,250 @@
+.play-heardle {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .play-heardle.loading,
+  .play-heardle.error {
+    color: white;
+    text-align: center;
+  }
+  
+  .heardle-container {
+    max-width: 600px;
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+  
+  .heardle-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .heardle-header h1 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+  
+  .question {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .attempts-progress {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .attempt-bar {
+    flex: 1;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+  
+  .attempt-bar.current {
+    background: #e7f3ff;
+    border-color: #007bff;
+    color: #007bff;
+  }
+  
+  .attempt-bar.past {
+    opacity: 0.5;
+  }
+  
+  .attempt-bar.correct {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #28a745;
+  }
+  
+  .attempt-bar.wrong {
+    background: #f8d7da;
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  
+  .play-btn {
+    width: 100%;
+    padding: 1.5rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+  }
+  
+  .play-btn:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  .play-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .guesses-list {
+    margin-bottom: 2rem;
+  }
+  
+  .guess-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border: 2px solid;
+  }
+  
+  .guess-item.correct {
+    background: #d4edda;
+    border-color: #28a745;
+  }
+  
+  .guess-item.wrong {
+    background: #f8d7da;
+    border-color: #dc3545;
+  }
+  
+  .attempt-number {
+    font-weight: 600;
+    color: #666;
+  }
+  
+  .guess-text {
+    flex: 1;
+    font-weight: 500;
+  }
+  
+  .guess-result {
+    font-size: 1.5rem;
+  }
+  
+  .guess-input-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .guess-input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .guess-input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .submit-btn {
+    padding: 1rem 2rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    background: #218838;
+  }
+  
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .skip-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .skip-btn:hover {
+    background: #5a6268;
+  }
+  
+  .game-over {
+    text-align: center;
+    padding: 2rem 0;
+  }
+  
+  .game-over h2 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+  
+  .game-over p {
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .song-reveal {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .song-reveal img {
+    width: 100px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .song-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .song-artist {
+    color: #666;
+  }
+  
+  .create-your-own {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  
+  .create-your-own:hover {
+    background: #0056b3;
+  }

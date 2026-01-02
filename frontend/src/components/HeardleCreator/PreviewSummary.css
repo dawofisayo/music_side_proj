@@ -1,0 +1,253 @@
+.preview-summary {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .preview-summary h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .preview-summary > p {
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .review-section {
+    margin-bottom: 2rem;
+  }
+  
+  .review-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  /* Song Card */
+  .song-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+  }
+  
+  .song-card img {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .song-details {
+    flex: 1;
+  }
+  
+  .song-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+  
+  .song-artist {
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  
+  .song-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+  }
+  
+  /* Config Card */
+  .config-card {
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+  }
+  
+  .mode-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .intervals {
+    color: #666;
+    font-size: 0.95rem;
+  }
+  
+  /* Challenge Card */
+  .challenge-card {
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+  }
+  
+  .question {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .answers-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+  
+  .answers-list {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #666;
+  }
+  
+  .answers-list li {
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Success State */
+  .preview-summary.success {
+    text-align: center;
+    max-width: 600px;
+  }
+  
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .preview-summary.success h2 {
+    color: #28a745;
+    margin-bottom: 1rem;
+  }
+  
+  .preview-summary.success > p {
+    margin-bottom: 1.5rem;
+  }
+  
+  .share-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .share-url {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f8f9fa;
+  }
+  
+  .copy-btn {
+    padding: 1rem 1.5rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .copy-btn:hover {
+    background: #218838;
+  }
+  
+  .next-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .test-btn, .create-another-btn {
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .test-btn {
+    background: #007bff;
+    color: white;
+  }
+  
+  .test-btn:hover {
+    background: #0056b3;
+  }
+  
+  .create-another-btn {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .create-another-btn:hover {
+    background: #5a6268;
+  }
+  
+  .error-message {
+    padding: 1rem;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c33;
+    margin-bottom: 1rem;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .back-btn {
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .back-btn:hover {
+    background: #5a6268;
+  }
+  
+  .back-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .create-btn {
+    padding: 0.75rem 2rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  
+  .create-btn:hover {
+    background: #218838;
+  }
+  
+  .create-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
