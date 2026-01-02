@@ -88,27 +88,27 @@ function StartTimePicker({ videoId, currentStartTime, onComplete, onBack }) {
     <div className="start-time-picker">
       <h2>⏱️ Choose Start Point</h2>
       <p>Pick where in the song your Heardle clips should start</p>
-
+      
       {/* YouTube Player */}
       <div className="player-container">
-        <div id="youtube-player"></div>
+      <div id="youtube-player"></div>
       </div>
-
+      
       {playerReady && (
         <>
-          {/* Time Slider */}
-          <div className="time-controls">
+      {/* Time Slider */}
+      <div className="time-controls">
             <span className="time-label">Start at: {formatTime(startTime)}</span>
-            <input
-              type="range"
-              min="0"
+        <input
+          type="range"
+          min="0"
               max={duration}
-              value={startTime}
-              onChange={(e) => handleSeek(parseInt(e.target.value))}
+          value={startTime}
+          onChange={(e) => handleSeek(parseInt(e.target.value))}
               className="time-slider"
-            />
+        />
             <span className="time-label">Duration: {formatTime(duration)}</span>
-          </div>
+      </div>
 
           {/* Preview Buttons */}
           <div className="preview-controls">

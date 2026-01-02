@@ -367,6 +367,20 @@ body::before {
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding-left: 60px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 56px;
+    padding-right: 12px;
+  }
+}
+
 /* Landing Page Styles */
 .hero-section {
   text-align: center;
@@ -1524,23 +1538,94 @@ form:hover {
   margin: 0;
 }
 
+/* Mobile Menu Button */
+.mobile-menu-button {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 101;
+  background: rgba(102, 126, 234, 0.2);
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    top: 12px;
+    left: 12px;
+  }
+}
+
+.mobile-menu-button:hover {
+  background: rgba(102, 126, 234, 0.3);
+  border-color: rgba(102, 126, 234, 0.6);
+}
+
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  backdrop-filter: blur(4px);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-overlay {
+    display: block;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
   .sidebar {
-    width: 100%;
-    height: auto;
-    min-height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    transform: translateX(-100%);
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
   }
   
   .sidebar.collapsed {
-    width: 100%;
+    width: 280px;
   }
   
   .sidebar-header {
     padding: 20px 24px;
+    padding-left: 72px;
   }
   
   .sidebar.collapsed .sidebar-header {
@@ -1559,8 +1644,6 @@ form:hover {
   
   .sidebar-nav {
     padding: 16px 0;
-    max-height: 300px;
-    overflow-y: auto;
   }
   
   .sidebar.collapsed .nav-section-title {
@@ -1585,8 +1668,9 @@ form:hover {
   }
   
   .nav-item {
-    padding: 12px 16px;
+    padding: 14px 16px;
     font-size: 0.9rem;
+    min-height: 44px;
   }
   
   .main-content {
@@ -1597,6 +1681,10 @@ form:hover {
   .main-content.sidebar-collapsed {
     margin-left: 0;
     width: 100%;
+  }
+  
+  .container {
+    padding: 20px 16px;
   }
   
   h1 {
@@ -1641,16 +1729,19 @@ form:hover {
   .quick-btn {
     padding: 16px 20px;
     font-size: 0.9rem;
+    min-height: 44px;
   }
   
   .mode-btn {
     padding: 12px 20px;
     font-size: 0.85rem;
+    min-height: 44px;
   }
   
   .submit-btn {
     padding: 18px 36px;
     font-size: 1rem;
+    min-height: 44px;
   }
   
   .track-card {
@@ -1667,8 +1758,16 @@ form:hover {
 }
 
 @media (max-width: 480px) {
+  .mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    top: 12px;
+    left: 12px;
+  }
+
   .sidebar {
-    width: 100%;
+    width: 260px;
   }
   
   .sidebar-logo {
@@ -1676,8 +1775,9 @@ form:hover {
   }
   
   .nav-item {
-    padding: 10px 14px;
+    padding: 12px 14px;
     font-size: 0.85rem;
+    min-height: 44px;
   }
   
   .nav-icon {
@@ -1685,8 +1785,7 @@ form:hover {
   }
   
   .container {
-    max-width: 100%;
-    padding: 20px 12px;
+    padding: 16px 12px;
   }
   
   h1 {
@@ -1757,6 +1856,7 @@ form:hover {
     width: 100%;
     padding: 14px 18px;
     font-size: 0.85rem;
+    min-height: 44px;
   }
   
   .mode-toggle {
@@ -1766,5 +1866,6 @@ form:hover {
   
   .mode-btn {
     width: 100%;
+    min-height: 44px;
   }
 }

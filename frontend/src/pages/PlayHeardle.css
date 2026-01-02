@@ -314,3 +314,53 @@
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .play-heardle {
+    padding: var(--spacing-md);
+  }
+
+  .heardle-container {
+    padding: var(--spacing-lg);
+    max-width: 100%;
+  }
+
+  .heardle-header h1 {
+    font-size: 2rem;
+  }
+
+  .attempt-bar {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  .play-btn,
+  .submit-btn,
+  .skip-btn {
+    min-height: 44px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+  }
+
+  .guess-input {
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
+  .guess-item {
+    padding: var(--spacing-md);
+    min-height: 44px;
+  }
+
+  .song-reveal {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .song-reveal img {
+    width: 120px;
+    height: 90px;
+  }
+}

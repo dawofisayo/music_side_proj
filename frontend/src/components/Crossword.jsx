@@ -554,6 +554,21 @@ function Crossword() {
         </div>
       </div>
 
+      {/* Mobile Clue Banner */}
+      {selectedClue && puzzle?.clues?.[selectedClue] && (
+        <div className="clue-banner">
+          <div className="clue-banner-content">
+            <span className="clue-banner-number">{selectedClue}</span>
+            <span className="clue-banner-text">{puzzle.clues[selectedClue].clue}</span>
+            {results && results[selectedClue] && (
+              <span className={`clue-banner-result ${results[selectedClue].correct ? 'correct' : 'wrong'}`}>
+                {results[selectedClue].correct ? '✓' : '✗'}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="crossword-footer">
         <div className="footer-buttons">
           <button onClick={checkAnswers} className="check-button">

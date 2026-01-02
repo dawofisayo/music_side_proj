@@ -199,3 +199,26 @@
   width: 100%;
 }
 
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .btn-primary,
+  .btn-secondary,
+  .back-btn,
+  .continue-btn {
+    min-height: 44px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+  }
+
+  .input,
+  .input-field {
+    min-height: 44px;
+    padding: var(--spacing-md);
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: var(--spacing-lg);
+  }
+}
+
