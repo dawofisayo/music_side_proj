@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SONG_DATABASE } from '../../data/songs';
+import { API_BASE_URL } from '../../config';
 import './HigherLower.css';
 
 function HigherLower() {
@@ -62,27 +63,7 @@ function HigherLower() {
     }
   };
 
-  /*
-  TODO: Implement handleGuess
-  
-  Parameters: guess (string - either "higher" or "lower")
-  
-  Logic:
-  1. Determine if guess is correct:
-     - If guess is "higher": viewsB > viewsA
-     - If guess is "lower": viewsB < viewsA
-  
-  2. Set showResult to true
-  
-  3. If correct:
-     - Increment score
-     - After 2 seconds, call nextRound()
-  
-  4. If wrong:
-     - Set gameOver to true
-  
-  Hint: Use setTimeout for the 2-second delay before nextRound
-  */
+
   const handleGuess = (guess) => {
     const isCorrect = 
     (guess === 'higher' && viewsB > viewsA) || 
@@ -95,7 +76,6 @@ function HigherLower() {
         setTimeout(nextRound, 2000);  
     } else {
         setGameOver(true);
-        setTimeout(startNewGame, 2000);
     }
   };
 

@@ -5,6 +5,7 @@ from typing import List, Optional, Dict
 import json
 import uuid
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from src.crossword_generator import CrosswordGenerator
 from src.models import Direction
 from src.llm_service import LLMService
@@ -256,7 +257,7 @@ async def get_daily_crossword(date: Optional[str] = None):
     """Generate daily crossword for a specific date (format: YYYY-MM-DD)"""
     try:
         if not date:
-            date = datetime.now().strftime("%Y-%m-%d")
+            date = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
         
         theme = get_daily_theme(date)
         topic = theme["topic"]
@@ -430,7 +431,7 @@ async def reveal_answers(date: Optional[str] = None):
     """Reveal all correct answers for a given date"""
     try:
         if not date:
-            date = datetime.now().strftime("%Y-%m-%d")
+            date = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
         
         # Get correct answers for this date
         correct_answers = daily_answers.get(date)

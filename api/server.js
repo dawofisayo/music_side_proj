@@ -23,6 +23,13 @@ app.use(express.json());
 const AUDIO_SERVICE_URL = process.env.AUDIO_SERVICE_URL || 'https://musicsideproj-audio-service.up.railway.app';
 const CROSSWORD_SERVICE_URL = process.env.CROSSWORD_SERVICE_URL || 'https://music-side-proj-crossword.up.railway.app';
 
+// Helper function to get current date in Eastern Time
+function getEasternDate() {
+  const now = new Date();
+  // Convert to Eastern Time (America/New_York)
+  const easternDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  return easternDate.toISOString().split('T')[0];
+}
 
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', service: 'api' });
@@ -85,7 +92,7 @@ app.post('/api/identify/youtube', async (req, res) => {
 
 app.get('/api/crossword/daily', async (req, res) => {
     try {
-      const date = req.query.date || new Date().toISOString().split('T')[0];
+      const date = req.query.date || getEasternDate();
       
       // Call Python crossword service
       const response = await axios.get(`${CROSSWORD_SERVICE_URL}/daily`, {
@@ -192,7 +199,7 @@ app.get('/api/youtube/metadata/:videoId', async (req, res) => {
 // Connections daily puzzle
 app.get('/api/connections/daily', async (req, res) => {
   try {
-    const date = req.query.date || new Date().toISOString().split('T')[0];
+    const date = req.query.date || getEasternDate();
     
     // Check cache first
     const cacheKey = `connections_${date}`;
