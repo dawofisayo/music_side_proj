@@ -412,6 +412,24 @@
   font-weight: 500;
 }
 
+.revealed-answers {
+  margin: 32px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.revealed-answers h3 {
+  color: #f87171;
+  font-size: 1.3rem;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.revealed-answers .solved-group {
+  margin: 12px auto;
+  max-width: 500px;
+}
+
 .result-screen button {
   margin-top: 20px;
   padding: 18px 40px;

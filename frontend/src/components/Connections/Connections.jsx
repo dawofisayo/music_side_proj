@@ -208,6 +208,24 @@ function Connections() {
         <div className="result-screen lose">
           <h2>Game Over!</h2>
           <p>You found {solvedGroups.length}/4 groups</p>
+          
+          {/* Show unsolved groups */}
+          {puzzle.groups.filter(group => !solvedGroups.some(solved => solved.category === group.category)).length > 0 && (
+            <div className="revealed-answers">
+              <h3>The correct answers were:</h3>
+              {puzzle.groups
+                .filter(group => !solvedGroups.some(solved => solved.category === group.category))
+                .map((group, idx) => (
+                  <div key={idx} className={`solved-group difficulty-${group.difficulty}`}>
+                    <div className="category-name">{group.category}</div>
+                    <div className="group-items">
+                      {group.items.join(', ')}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+          
           <button onClick={() => window.location.reload()}>Try Again</button>
         </div>
       )}
