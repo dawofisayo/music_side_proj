@@ -316,7 +316,7 @@ app.post('/api/heardles', async (req, res) => {
     // Create heardle in database
     const heardle = await prisma.heardle.create({
       data: {
-        id,
+      id,
         youtubeUrl: heardleData.song.youtubeUrl,
         videoId: heardleData.song.videoId,
         title: heardleData.song.title,
@@ -327,13 +327,13 @@ app.post('/api/heardles', async (req, res) => {
         intervals: heardleData.gameConfig.intervals,
         question: heardleData.challenge.question,
         acceptableAnswers: heardleData.challenge.acceptableAnswers,
-        isPublic: true,
-        status: 'active'
+      isPublic: true,
+      status: 'active'
       }
     });
     
     // Return just the path - frontend will construct full URL
-    res.json({
+    res.json({ 
       id,
       path: `/heardle/${id}`
     });
@@ -346,16 +346,16 @@ app.post('/api/heardles', async (req, res) => {
 // Get a Heardle by ID
 app.get('/api/heardles/:id', async (req, res) => {
   try {
-    const { id } = req.params;
+  const { id } = req.params;
     
     const heardle = await prisma.heardle.findUnique({
       where: { id }
     });
-    
-    if (!heardle) {
-      return res.status(404).json({ error: 'Heardle not found' });
-    }
-    
+  
+  if (!heardle) {
+    return res.status(404).json({ error: 'Heardle not found' });
+  }
+  
     // Transform database format back to app format
     const response = {
       id: heardle.id,
