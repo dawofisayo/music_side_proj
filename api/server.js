@@ -236,17 +236,25 @@ async function generateConnectionsPuzzle(theme) {
 
 Generate 4 categories, each with 4 items (songs, artists, albums, etc.).
 
-RULES:
-1. Each category should be distinct but not too obvious
-2. Items should only fit in ONE category (no overlap!)
-3. Mix difficulty levels (1=easy, 4=hardest)
-4. All items must be real and verifiable
+CRITICAL RULES:
+1. Each category description MUST accurately describe ALL 4 items in that category
+2. Verify that EVERY single item actually fits the category description - no exceptions!
+3. Each item should only fit in ONE category (no overlap!)
+4. All items must be real, verifiable, and well-known
+5. Mix difficulty levels (1=easy, 4=hardest)
+6. Categories should be distinct but not too obvious
+
+VALIDATION CHECKLIST (verify before including):
+- Does the category description match ALL 4 items? Check each one individually.
+- If a category says "X with Y", does EVERY item actually have Y?
+- If a category says "X that did Y", did ALL 4 actually do Y?
+- Are the items correctly grouped or are you forcing them into the wrong category?
 
 DIFFICULTY GUIDE:
 - Level 1 (Easy): Obvious grouping like "Songs by Taylor Swift"
 - Level 2 (Medium): Requires some thought like "Songs from 2015"
 - Level 3 (Hard): Trickier like "Songs with colors in the title"
-- Level 4 (Hardest): Very subtle like "Songs that samples the same artist"
+- Level 4 (Hardest): Very subtle like "Songs that sample the same artist"
 
 Return ONLY valid JSON:
 {
@@ -261,15 +269,15 @@ Return ONLY valid JSON:
 }`;
 
   const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini', // Better for creative tasks
+    model: 'gpt-4o-mini',
     messages: [
       { 
         role: 'system', 
-        content: 'You create Connections puzzles. Categories must be distinct with no overlap between items. Output only valid JSON.' 
+        content: 'You create Connections puzzles. CRITICAL: Every item in a category MUST actually match the category description. Verify each item individually. Categories must be distinct with no overlap. Output only valid JSON.' 
       },
       { role: 'user', content: prompt }
     ],
-    temperature: 0.8, // Higher for creativity
+    temperature: 0.7, // Slightly lower for more accuracy
   });
 
   const responseText = completion.choices[0].message.content;

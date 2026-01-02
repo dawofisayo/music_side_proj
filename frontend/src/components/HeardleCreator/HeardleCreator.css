@@ -1,0 +1,853 @@
+/* Consolidated HeardleCreator Styles */
+@import '../../styles/variables.css';
+@import '../../styles/components.css';
+
+/* Shared Container Styles */
+.song-input,
+.start-time-picker,
+.game-mode-selector,
+.challenge-setup-v2,
+.preview-summary {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  width: 100%;
+}
+
+.song-input {
+  max-width: 700px;
+}
+
+/* Shared Heading Styles */
+.song-input h2,
+.start-time-picker h2,
+.game-mode-selector h2,
+.challenge-setup-v2 h2,
+.preview-summary h2 {
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  text-align: center;
+  text-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+}
+
+.song-input > p,
+.start-time-picker > p,
+.game-mode-selector > p,
+.preview-summary > p {
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   SONG INPUT STYLES
+   ============================================ */
+.input-group {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.input-group input {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  transition: var(--transition-base);
+  font-family: var(--font-primary);
+}
+
+.input-group input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--border-primary-hover);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.input-group button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--bg-primary-gradient);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.input-group button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.input-group button:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.song-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  margin-top: var(--spacing-xl);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+}
+
+.song-preview img {
+  width: 140px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.song-info {
+  flex: 1;
+  text-align: left;
+}
+
+.song-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.song-info p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+/* ============================================
+   START TIME PICKER STYLES
+   ============================================ */
+.player-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto var(--spacing-2xl);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--border-primary);
+}
+
+#youtube-player {
+  width: 100%;
+  height: 100%;
+}
+
+.time-controls {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(20px);
+}
+
+.time-label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.time-slider {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-appearance: none;
+  margin: var(--spacing-lg) 0;
+  cursor: pointer;
+}
+
+.time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-primary-gradient);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+  transition: var(--transition-fast);
+}
+
+.time-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.time-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-primary-gradient);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+  transition: var(--transition-fast);
+  appearance: none;
+  -moz-appearance: none;
+}
+
+.time-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.preview-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.preview-btn {
+  padding: 0.875rem 1.75rem;
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-accent);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition-base);
+  backdrop-filter: blur(10px);
+}
+
+.preview-btn:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-primary-hover);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   GAME MODE SELECTOR STYLES
+   ============================================ */
+.mode-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.mode-card {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  transition: var(--transition-base);
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.mode-card:hover {
+  border-color: var(--border-primary-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(102, 126, 234, 0.3);
+}
+
+.mode-card.selected {
+  border-color: var(--border-primary-active);
+  background: linear-gradient(145deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
+  box-shadow: 0 16px 48px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mode-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.mode-content {
+  text-align: center;
+}
+
+.mode-icon {
+  font-size: 3.5rem;
+  margin-bottom: var(--spacing-md);
+  filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.4));
+}
+
+.mode-content h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.4rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.mode-content p {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+
+.intervals {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: rgba(102, 126, 234, 0.15);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  color: var(--color-text-purple);
+  font-weight: 600;
+  transition: var(--transition-base);
+}
+
+.mode-card.selected .intervals {
+  background: var(--bg-primary-gradient);
+  border-color: transparent;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   CHALLENGE SETUP STYLES
+   ============================================ */
+.section-label {
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+.helper {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: -0.5rem 0 var(--spacing-lg) 0;
+}
+
+.question-section,
+.answers-section {
+  margin-bottom: var(--spacing-3xl);
+  padding: var(--spacing-xl);
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(20px);
+}
+
+.question-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.question-chip {
+  padding: 0.875rem var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: var(--transition-base);
+  color: var(--color-text-secondary);
+}
+
+.question-chip:hover {
+  border-color: var(--border-primary-hover);
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+}
+
+.question-chip.selected {
+  background: var(--bg-primary-gradient);
+  border-color: transparent;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.custom-question-input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  margin-top: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  transition: var(--transition-base);
+  font-family: var(--font-primary);
+}
+
+.custom-question-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.custom-question-input:focus {
+  outline: none;
+  border-color: var(--border-primary-hover);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.answer-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.answer-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 50%;
+  font-weight: 700;
+  color: var(--color-text-accent);
+  flex-shrink: 0;
+  font-size: 0.95rem;
+}
+
+.answer-input {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: var(--transition-base);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-family: var(--font-primary);
+}
+
+.answer-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.answer-input:focus {
+  outline: none;
+  border-color: var(--border-primary-hover);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.remove-btn {
+  padding: 0.5rem 0.875rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--color-error-light);
+  border: 2px solid var(--border-error);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: var(--transition-base);
+}
+
+.remove-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: var(--color-text-primary);
+  transform: scale(1.1);
+}
+
+.add-answer-btn {
+  padding: 0.875rem var(--spacing-lg);
+  background: var(--bg-primary-gradient);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: var(--spacing-lg);
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-answer-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.answer-tip {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(251, 191, 36, 0.15);
+  border-left: 4px solid rgba(251, 191, 36, 0.6);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--color-warning-light);
+}
+
+.preview-section {
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  backdrop-filter: blur(10px);
+}
+
+.preview-label {
+  font-weight: 700;
+  color: var(--color-text-accent);
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.preview-question {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.preview-answers {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   PREVIEW SUMMARY STYLES
+   ============================================ */
+.review-section {
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.review-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-accent);
+  font-weight: 700;
+  text-align: center;
+}
+
+.song-card,
+.config-card,
+.challenge-card {
+  display: flex;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 100%;
+}
+
+.song-card img {
+  width: 140px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  align-self: center;
+}
+
+.song-details {
+  flex: 1;
+  text-align: center;
+}
+
+.song-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.song-artist {
+  color: var(--color-text-secondary);
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+}
+
+.song-meta {
+  font-size: 0.9rem;
+  color: var(--color-text-purple);
+  background: rgba(102, 126, 234, 0.15);
+  border: 1px solid var(--border-primary);
+  display: inline-block;
+  padding: 0.5rem var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.config-card,
+.challenge-card {
+  flex-direction: column;
+  text-align: center;
+}
+
+.mode-name {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.question {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+
+.answers-label {
+  font-weight: 700;
+  color: var(--color-text-accent);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.answers-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.answers-list li {
+  margin-bottom: 0.5rem;
+}
+
+.preview-summary.success {
+  text-align: center;
+  max-width: 650px;
+}
+
+.success-icon {
+  font-size: 5rem;
+  margin-bottom: var(--spacing-lg);
+  filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.4));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.preview-summary.success h2 {
+  background: var(--bg-success-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-md);
+}
+
+.share-box {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.share-url {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  transition: var(--transition-base);
+}
+
+.share-url:focus {
+  outline: none;
+  border-color: var(--border-primary-hover);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.copy-btn {
+  padding: var(--spacing-md) 1.75rem;
+  background: var(--bg-primary-gradient);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.copy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.next-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.test-btn,
+.create-another-btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: var(--transition-base);
+  display: inline-block;
+}
+
+.test-btn {
+  background: var(--bg-primary-gradient);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.test-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.create-another-btn {
+  background: var(--bg-glass);
+  border: 2px solid var(--border-primary);
+  color: var(--color-text-accent);
+  backdrop-filter: blur(10px);
+}
+
+.create-another-btn:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-primary-hover);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.create-btn {
+  padding: var(--spacing-md) 2.5rem;
+  background: var(--bg-success-gradient);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: var(--transition-base);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.create-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-success);
+}
+
+.create-btn:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ============================================
+   PROGRESS BAR STYLES
+   ============================================ */
+.heardle-creator {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  margin-bottom: var(--spacing-3xl);
+  width: 100%;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: 10px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-bar-text {
+  text-align: center;
+  margin-top: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-size: 0.95rem;
+  font-weight: 500;
+}

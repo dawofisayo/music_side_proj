@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './GameModeSelector.css';
+import './HeardleCreator.css';
 
 const GAME_MODES = {
   classic: {

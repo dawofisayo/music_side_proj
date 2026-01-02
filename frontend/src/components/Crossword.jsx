@@ -31,6 +31,19 @@ function Crossword() {
   const loadPuzzle = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/crossword/daily`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to load puzzle:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: `${API_BASE_URL}/api/crossword/daily`,
+          error: errorText
+        });
+        setLoading(false);
+        return;
+      }
+      
       const data = await response.json();
       setPuzzle(data);
       
@@ -45,7 +58,12 @@ function Crossword() {
       
       setLoading(false);
     } catch (error) {
-      console.error('Failed to load puzzle:', error);
+      console.error('Failed to load puzzle:', {
+        error: error.message,
+        url: `${API_BASE_URL}/api/crossword/daily`,
+        apiBaseUrl: API_BASE_URL,
+        stack: error.stack
+      });
       setLoading(false);
     }
   };

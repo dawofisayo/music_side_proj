@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './ChallengeSetup.css';
+import './HeardleCreator.css';
 
 function ChallengeSetup({ songTitle, artist, currentChallenge, onComplete, onBack }) {
   // Question templates

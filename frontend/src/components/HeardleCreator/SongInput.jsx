@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { extractYouTubeId, fetchVideoMetadata } from '../../utils/youtubehelpers';
-import './SongInput.css';
+import './HeardleCreator.css';
 
 function SongInput({ data, onComplete }) {
   const [url, setUrl] = useState(data?.youtubeUrl || '');

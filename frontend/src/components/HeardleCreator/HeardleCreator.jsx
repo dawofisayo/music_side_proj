@@ -5,29 +5,18 @@ import GameModeSelector from './GameModeSelector';
 import ChallengeSetup from './ChallengeSetup';
 import PreviewSummary from './PreviewSummary';
 import { API_BASE_URL } from '../../config';
+import './HeardleCreator.css';
 
-// Placeholder components - TODO: implement these
 function ProgressBar({ currentStep, totalSteps }) {
   const percentage = (currentStep / totalSteps) * 100;
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <div style={{ 
-        width: '100%', 
-        height: '8px', 
-        backgroundColor: 'rgba(255,255,255,0.1)', 
-        borderRadius: '4px',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          width: `${percentage}%`,
-          height: '100%',
-          backgroundColor: '#667eea',
-          transition: 'width 0.3s ease'
-        }} />
+    <div className="progress-bar">
+      <div className="progress-bar-track">
+        <div 
+          className="progress-bar-fill"
+          style={{ width: `${percentage}%` }}
+        />
       </div>
-      <p style={{ textAlign: 'center', marginTop: '0.5rem', color: 'rgba(255,255,255,0.7)' }}>
-        Step {currentStep} of {totalSteps}
-      </p>
     </div>
   );
 }

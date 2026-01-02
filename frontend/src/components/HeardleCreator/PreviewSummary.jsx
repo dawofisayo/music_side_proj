@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './PreviewSummary.css';
+import './HeardleCreator.css';
 
 function PreviewSummary({ heardleData, onBack, onCreate }) {
   const [isCreating, setIsCreating] = useState(false);
