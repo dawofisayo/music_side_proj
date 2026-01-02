@@ -1,4 +1,5 @@
-
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const express = require('express');
 const cors = require('cors');
@@ -302,35 +303,37 @@ function generateHeardleId() {
 }
 
 // In-memory storage for now (replace with database later)
-const heardles = new Map();
 
-// Create a new Heardle
-app.post('/api/heardles', (req, res) => {
+
+
+app.post('/api/heardles', async (req, res) => {
   try {
     const heardleData = req.body;
     
     // Generate unique ID
     const id = generateHeardleId();
     
-    // Create heardle object
-    const heardle = {
-      id,
-      ...heardleData,
-      createdAt: new Date().toISOString(),
-      stats: {
-        plays: 0,
-        completions: 0,
-        totalAttempts: 0
-      },
-      isPublic: true,
-      status: 'active'
-    };
+    // Create heardle in database
+    const heardle = await prisma.heardle.create({
+      data: {
+        id,
+        youtubeUrl: heardleData.song.youtubeUrl,
+        videoId: heardleData.song.videoId,
+        title: heardleData.song.title,
+        artist: heardleData.song.artist,
+        thumbnail: heardleData.song.thumbnail,
+        startTimeSeconds: heardleData.song.startTimeSeconds,
+        mode: heardleData.gameConfig.mode,
+        intervals: heardleData.gameConfig.intervals,
+        question: heardleData.challenge.question,
+        acceptableAnswers: heardleData.challenge.acceptableAnswers,
+        isPublic: true,
+        status: 'active'
+      }
+    });
     
-    // Store it
-    heardles.set(id, heardle);
-    
-    // Return the ID - frontend will construct the URL using its own origin
-    res.json({ 
+    // Return just the path - frontend will construct full URL
+    res.json({
       id,
       path: `/heardle/${id}`
     });
@@ -341,15 +344,52 @@ app.post('/api/heardles', (req, res) => {
 });
 
 // Get a Heardle by ID
-app.get('/api/heardles/:id', (req, res) => {
-  const { id } = req.params;
-  const heardle = heardles.get(id);
-  
-  if (!heardle) {
-    return res.status(404).json({ error: 'Heardle not found' });
+app.get('/api/heardles/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const heardle = await prisma.heardle.findUnique({
+      where: { id }
+    });
+    
+    if (!heardle) {
+      return res.status(404).json({ error: 'Heardle not found' });
+    }
+    
+    // Transform database format back to app format
+    const response = {
+      id: heardle.id,
+      createdAt: heardle.createdAt,
+      song: {
+        youtubeUrl: heardle.youtubeUrl,
+        videoId: heardle.videoId,
+        title: heardle.title,
+        artist: heardle.artist,
+        thumbnail: heardle.thumbnail,
+        startTimeSeconds: heardle.startTimeSeconds
+      },
+      gameConfig: {
+        mode: heardle.mode,
+        intervals: heardle.intervals
+      },
+      challenge: {
+        question: heardle.question,
+        acceptableAnswers: heardle.acceptableAnswers
+      },
+      stats: {
+        plays: heardle.plays,
+        completions: heardle.completions,
+        totalAttempts: heardle.totalAttempts
+      },
+      isPublic: heardle.isPublic,
+      status: heardle.status
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching heardle:', error);
+    res.status(500).json({ error: 'Failed to fetch Heardle' });
   }
-  
-  res.json(heardle);
 });
 
 app.listen(3000, () => {
