@@ -381,39 +381,40 @@ function Crossword() {
                 
                 // Determine which clue to use for this cell
                 // CRITICAL: Only show letters from clues that actually use this cell
-                let displayClueId = null;
-                let letter = '';
-                
-                // Priority: selected clue (if it uses this cell) > first clue with an answer > first clue
-                if (isInSelectedWord) {
-                  // Verify the selected clue actually uses this cell by checking position
-                  const selectedPos = puzzle.template.positions?.[selectedClue];
-                  if (selectedPos) {
-                    const checkPos = getCellPosition(rowIdx, colIdx, selectedClue);
-                    if (checkPos >= 0 && checkPos < selectedPos.length) {
-                      displayClueId = selectedClue;
-                    }
-                  }
-                }
-                
-                // If selected clue doesn't use this cell, find another clue that does
-                if (!displayClueId) {
-                  for (const cid of clueIds) {
-                    const cpos = puzzle.template.positions?.[cid];
-                    if (cpos) {
-                      const checkPos = getCellPosition(rowIdx, colIdx, cid);
-                      if (checkPos >= 0 && checkPos < cpos.length) {
-                        // This clue uses this cell
-                        if (userAnswers[cid] || revealedAnswers[cid]) {
-                          displayClueId = cid;
-                          break;
-                        } else if (!displayClueId) {
-                          displayClueId = cid; // Use first valid clue as fallback
-                        }
-                      }
-                    }
-                  }
-                }
+// Determine which clue to use for this cell
+let displayClueId = null;
+let letter = '';
+
+// For intersection cells, we need to show the letter regardless of which word is selected
+// Priority: selected clue (if valid) > any clue with an answer > first valid clue
+if (isInSelectedWord && selectedClue) {
+  const selectedPos = puzzle.template.positions?.[selectedClue];
+  if (selectedPos) {
+    const checkPos = getCellPosition(rowIdx, colIdx, selectedClue);
+    if (checkPos >= 0 && checkPos < selectedPos.length) {
+      displayClueId = selectedClue;
+    }
+  }
+}
+
+// If selected clue doesn't use this cell, find any clue that does
+if (!displayClueId) {
+  for (const cid of clueIds) {
+    const cpos = puzzle.template.positions?.[cid];
+    if (cpos) {
+      const checkPos = getCellPosition(rowIdx, colIdx, cid);
+      if (checkPos >= 0 && checkPos < cpos.length) {
+        // Prefer clues that have answers
+        if (userAnswers[cid]?.trim() || revealedAnswers[cid]) {
+          displayClueId = cid;
+          break;
+        } else if (!displayClueId) {
+          displayClueId = cid; // Use first valid clue as fallback
+        }
+      }
+    }
+  }
+}
                 
                 // Only display letter if we found a valid clue for this cell
                 if (displayClueId) {
@@ -450,8 +451,36 @@ function Crossword() {
                 
                 const displayLetter = letter;
                 
-                const isCorrect = displayClueId && results && results[displayClueId]?.correct;
-                const isWrong = displayClueId && results && results[displayClueId] && !results[displayClueId].correct;
+                // Check if this specific letter is correct, not the whole word
+                let isCorrect = false;
+                let isWrong = false;
+                
+                // Debug logging for ANY cell with content
+                if (rowIdx === 0 && colIdx === 0 && displayLetter) {
+                  console.log('🔍 Cell (0,0) Debug:', {
+                    displayClueId,
+                    displayLetter,
+                    hasResults: !!results,
+                    resultsKeys: results ? Object.keys(results) : [],
+                    resultsForClue: results ? results[displayClueId] : null
+                  });
+                }
+                
+                if (displayClueId && results && results[displayClueId]) {
+                  const position = getCellPosition(rowIdx, colIdx, displayClueId);
+                  const correctAnswer = results[displayClueId].answer;
+                  const userLetter = displayLetter.trim().toUpperCase();
+                  
+                  if (position >= 0 && correctAnswer && position < correctAnswer.length) {
+                    const correctLetter = correctAnswer[position].toUpperCase();
+                    // Only mark as correct/wrong if user has entered something AND it's not just a space
+                    if (userLetter.length > 0 && userLetter !== ' ') {
+                      isCorrect = userLetter === correctLetter;
+                      isWrong = userLetter !== correctLetter;
+                    }
+                  }
+                }
+                
                 const cellIsRevealed = displayClueId && revealedAnswers[displayClueId] !== undefined;
                 
                 return (

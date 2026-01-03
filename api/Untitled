@@ -1,0 +1,23 @@
+app.post('/api/crossword/check', async (req, res) => {
+  try {
+    const { date, answers } = req.body;
+    
+    // Call Python crossword service to check answers
+    const response = await axios.post(`${CROSSWORD_SERVICE_URL}/check`, 
+      { date, answers },
+      { timeout: 10000 }
+    );
+    
+    console.log('🔍 Full Python response:', JSON.stringify(response.data, null, 2));
+    console.log('🔍 Results being sent to frontend:', JSON.stringify(response.data.results, null, 2));
+    
+    // Return just the results object, not the whole response
+    res.json(response.data.results);
+  } catch (error) {
+    console.error('Error checking answers:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({ 
+      error: 'Failed to check answers',
+      details: error.response?.data?.detail || error.message
+    });
+  }
+});

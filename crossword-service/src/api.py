@@ -401,6 +401,7 @@ async def check_answers(request: dict):
             is_correct = user_answer.strip().upper() == correct.strip().upper()
             results[clue_id] = {
                 "correct": is_correct,
+                "answer": correct,
                 "length": len(correct)
             }
         
