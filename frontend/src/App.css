@@ -392,6 +392,47 @@ body::before {
   justify-content: center;
   width: 100%;
   max-width: 100%;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Floating Cursor Notes */
+.cursor-notes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor-note {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+  animation: noteFloat 2s ease-out forwards;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+}
+
+@keyframes noteFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(1.5) rotate(360deg);
+  }
 }
 
 .hero-title {
@@ -418,17 +459,94 @@ body::before {
   color: #a0aec0;
   font-weight: 500;
   max-width: 600px;
+  margin: 0 auto 12px;
+}
+
+.hero-tagline {
+  font-size: 1rem;
+  color: #718096;
+  font-weight: 400;
+  max-width: 700px;
   margin: 0 auto;
+  line-height: 1.6;
+}
+
+.features-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.feature-section {
+  margin-bottom: 80px;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.feature-section:last-child {
+  margin-bottom: 40px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  position: relative;
+  padding-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.section-title:hover {
+  transform: scale(1.05);
+  text-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 30px;
-  margin: 60px 0;
-  max-width: 1400px;
+  margin: 0;
+  max-width: 100%;
   width: 100%;
-  padding: 0 20px;
+  padding: 0;
 }
 
 .feature-card {
@@ -443,18 +561,16 @@ body::before {
   position: relative;
   overflow: hidden;
   text-align: left;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  animation: cardEntrance 0.6s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-  background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
+  display: none;
 }
 
 @keyframes shimmer {
@@ -463,9 +579,32 @@ body::before {
 }
 
 .feature-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-12px) scale(1.03) rotateX(5deg) rotateY(-2deg);
   border-color: rgba(102, 126, 234, 0.6);
   box-shadow: 0 24px 64px rgba(102, 126, 234, 0.4), 0 0 40px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+}
+
+.feature-card:active {
+  transform: translateY(-8px) scale(1.01) rotateX(2deg);
+}
+
+.feature-card.featured {
+  border-width: 3px;
+  border-color: rgba(102, 126, 234, 0.5);
+  background: linear-gradient(145deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+  box-shadow: 0 20px 56px rgba(102, 126, 234, 0.4), 0 0 48px rgba(102, 126, 234, 0.2);
+}
+
+.feature-card.featured::before {
+  display: none;
+}
+
+.feature-card.featured:hover {
+  transform: translateY(-15px) scale(1.05) rotateX(8deg) rotateY(-3deg);
+  border-color: rgba(102, 126, 234, 0.8);
+  box-shadow: 0 28px 72px rgba(102, 126, 234, 0.5), 0 0 56px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(145deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
 }
 
 .feature-icon {
@@ -473,6 +612,12 @@ body::before {
   margin-bottom: 20px;
   filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.4));
   animation: float 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 6px 16px rgba(102, 126, 234, 0.6));
 }
 
 @keyframes float {
@@ -1799,16 +1944,33 @@ form:hover {
   .hero-subtitle {
     font-size: 1rem;
   }
+
+  .hero-tagline {
+    font-size: 0.85rem;
+  }
   
   .hero-section {
     padding: 30px 16px;
     margin-bottom: 40px;
   }
+
+  .features-container {
+    padding: 0 12px;
+  }
+
+  .feature-section {
+    margin-bottom: 50px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
   
   .features-grid {
     gap: 20px;
-    padding: 0 12px;
-    margin: 40px 0;
+    padding: 0;
+    margin: 0;
   }
   
   .feature-card {
