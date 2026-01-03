@@ -375,7 +375,7 @@ export const SONG_DATABASE = [
       artist: "Bad Bunny",
       album: "El Último Tour Del Mundo",
       spotifyId: "3HP9TrlMRH3RkHxP1qPCNI",
-      youtubeId: "dFT5qYbZGwo",
+      youtubeId: "TmKh7lAwnBI",
       releaseYear: 2020,
       country: "Puerto Rico",
       genre: "Reggaeton"
@@ -575,7 +575,7 @@ export const SONG_DATABASE = [
       artist: "Stan Getz & João Gilberto",
       album: "Getz/Gilberto",
       spotifyId: "5hslUAKq9I9CG2bAulFkHN",
-      youtubeId: "UJkxFhFRFDA",
+      youtubeId: "RDsVdaFQhS86E",
       releaseYear: 1964,
       country: "Brazil",
       genre: "Bossa Nova"

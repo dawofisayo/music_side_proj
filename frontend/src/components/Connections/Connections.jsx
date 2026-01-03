@@ -11,6 +11,7 @@ function Connections() {
   const [gameOver, setGameOver] = useState(false);
   const [loading, setLoading] = useState(true);
   const [shakeWrong, setShakeWrong] = useState(false);
+  const [error, setError] = useState(null);
 
   // Load puzzle on mount
   useEffect(() => {
@@ -34,11 +35,17 @@ function Connections() {
   */
   const loadPuzzle = async () => {
     try {
+      setError(null);
       const response = await fetch(`${API_BASE_URL}/api/connections/daily`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load puzzle: ${response.status} ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       // Check if the response has an error or is missing groups
-      if (!response.ok || data.error || !data.groups) {
+      if (data.error || !data.groups) {
         throw new Error(data.error || 'Failed to load puzzle');
       }
 
@@ -50,8 +57,8 @@ function Connections() {
       setLoading(false);
     } catch (error) {
       console.error('Error loading puzzle:', error);
+      setError(error.message || 'Failed to load puzzle. Please check your API configuration.');
       setLoading(false);
-      // You might want to set an error state here to show to the user
     }
   };
 
@@ -131,6 +138,23 @@ function Connections() {
     return (
       <div className="connections-container">
         <div className="loading">Loading puzzle...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="connections-container">
+        <div className="error-message">
+          <h2>⚠️ Unable to Load Puzzle</h2>
+          <p>{error}</p>
+          <p style={{ fontSize: '0.9rem', color: '#a0aec0', marginTop: '1rem' }}>
+            Make sure the API server is running and the VITE_API_BASE_URL environment variable is set correctly.
+          </p>
+          <button onClick={loadPuzzle} style={{ marginTop: '1rem', padding: '0.75rem 1.5rem', cursor: 'pointer' }}>
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
