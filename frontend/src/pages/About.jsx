@@ -187,7 +187,7 @@ export default function About() {
         {/* Footer Note */}
         <div className="about-footer">
           <p className="about-footer-text">
-            Built with 💜 Dami
+            Built with 💜 by Dami
           </p>
         </div>
 
