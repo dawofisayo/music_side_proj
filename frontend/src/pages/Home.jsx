@@ -48,6 +48,9 @@ function Home() {
         <h1 className="hero-title">🎵 SoundCheck</h1>
         <p className="hero-subtitle">Your ultimate destination for music discovery, games, and puzzles</p>
         <p className="hero-tagline">Identify songs, test your knowledge, and challenge yourself daily</p>
+        <Link to="/about" className="hero-about-link">
+          Learn more about SoundCheck →
+        </Link>
       </div>
 
       {/* Feature Cards - Organized by Category */}

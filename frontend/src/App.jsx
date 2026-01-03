@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import About from './pages/About';
 import SampleDetector from './pages/SampleDetector';
 import Heardle from './components/Heardle';
 import Crossword from './components/Crossword';
@@ -19,6 +20,7 @@ function App() {
       
       {/* All other routes with Layout */}
       <Route path="/" element={<Layout><Home /></Layout>} />
+      <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/sample-detector" element={<Layout><SampleDetector /></Layout>} />
       <Route path="/heardle" element={<Layout><Heardle /></Layout>} />
       <Route path="/decade-game" element={<Layout><DecadeGame /></Layout>} />

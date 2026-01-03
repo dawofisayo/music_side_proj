@@ -136,6 +136,18 @@ function Layout({ children }) {
               <span className="nav-label">Connections</span>
             </Link>
           </div>
+
+          {/* About Section */}
+          <div className="nav-section">
+            <h3 className="nav-section-title">About</h3>
+            <Link 
+              to="/about"
+              className={`nav-item ${isActive('/about') ? 'active' : ''}`}
+            >
+              <span className="nav-icon">🎵</span>
+              <span className="nav-label">About SoundCheck</span>
+            </Link>
+          </div>
         </nav>
       </aside>
       
