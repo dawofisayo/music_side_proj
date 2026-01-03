@@ -13,6 +13,7 @@ function Crossword() {
   const [loading, setLoading] = useState(true);
   const gridRef = useRef(null);
   const cluesRef = useRef({});
+  const mobileInputRef = useRef(null);
 
   useEffect(() => {
     loadPuzzle();
@@ -27,6 +28,16 @@ function Crossword() {
       });
     }
   }, [selectedClue]);
+
+  // Focus mobile input when cell is selected (for mobile keyboard)
+  useEffect(() => {
+    if (selectedCell && mobileInputRef.current) {
+      // Small delay to ensure the input is rendered
+      setTimeout(() => {
+        mobileInputRef.current?.focus();
+      }, 100);
+    }
+  }, [selectedCell]);
 
   const loadPuzzle = async () => {
     try {
@@ -134,6 +145,56 @@ function Crossword() {
         setSelectedClue(clueId);
       }
     }
+  };
+
+  // Handle mobile input
+  const handleMobileInput = (e) => {
+    if (!selectedCell || !puzzle || !selectedClue) return;
+    
+    const value = e.target.value.toUpperCase();
+    if (value.length === 0) return;
+    
+    const lastChar = value[value.length - 1];
+    if (!lastChar.match(/[A-Z0-9]/)) return;
+    
+    const { row, col } = selectedCell;
+    const clueId = selectedClue;
+    const pos = puzzle.template.positions[clueId];
+    if (!pos) return;
+    
+    const position = getCellPosition(row, col, clueId);
+    if (position < 0 || position >= pos.length) return;
+    
+    // Update the answer
+    const newAnswers = { ...userAnswers };
+    if (!newAnswers[clueId]) {
+      newAnswers[clueId] = ''.padEnd(pos.length, ' ');
+    }
+    const answerArray = newAnswers[clueId].split('');
+    answerArray[position] = lastChar;
+    newAnswers[clueId] = answerArray.join('');
+    
+    // Update intersecting words
+    const allCluesAtCell = getAllCluesAtCell(row, col);
+    allCluesAtCell.forEach(otherClueId => {
+      if (otherClueId !== clueId && newAnswers[otherClueId]) {
+        const otherPos = puzzle.template.positions[otherClueId];
+        if (otherPos) {
+          const otherPosition = getCellPosition(row, col, otherClueId);
+          if (otherPosition >= 0 && otherPosition < otherPos.length) {
+            const otherAnswer = newAnswers[otherClueId].split('');
+            otherAnswer[otherPosition] = lastChar;
+            newAnswers[otherClueId] = otherAnswer.join('');
+          }
+        }
+      }
+    });
+    
+    setUserAnswers(newAnswers);
+    
+    // Clear input and move to next cell
+    e.target.value = '';
+    moveToNextCell(row, col, clueId);
   };
 
   // Handle keyboard input
@@ -536,6 +597,43 @@ if (!displayClueId) {
       <div className="crossword-main">
         <div className="grid-section">
           {renderGrid()}
+          {/* Mobile input for keyboard - hidden on desktop */}
+          {selectedCell && (
+            <input
+              ref={mobileInputRef}
+              type="text"
+              className="mobile-crossword-input"
+              onChange={handleMobileInput}
+              onKeyDown={(e) => {
+                // Handle backspace
+                if (e.key === 'Backspace' && !e.target.value) {
+                  if (!selectedCell || !puzzle || !selectedClue) return;
+                  const { row, col } = selectedCell;
+                  const clueId = selectedClue;
+                  const pos = puzzle.template.positions[clueId];
+                  if (!pos) return;
+                  
+                  const position = getCellPosition(row, col, clueId);
+                  if (position < 0 || position >= pos.length) return;
+                  
+                  const newAnswers = { ...userAnswers };
+                  if (newAnswers[clueId]) {
+                    const answerArray = newAnswers[clueId].split('');
+                    answerArray[position] = ' ';
+                    newAnswers[clueId] = answerArray.join('');
+                    setUserAnswers(newAnswers);
+                  }
+                  moveToPrevCell(row, col, clueId);
+                }
+              }}
+              maxLength={1}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="characters"
+              inputMode="text"
+              aria-label="Crossword input"
+            />
+          )}
         </div>
 
         <div className="clues-section">
