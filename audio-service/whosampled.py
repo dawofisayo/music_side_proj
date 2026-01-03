@@ -54,7 +54,8 @@ def fetch_with_flaresolverr(url: str, max_timeout: int = 120000, retries: int = 
             }
             
             # Increase timeout to match maxTimeout (120 seconds = 120000ms) + buffer
-            response = requests.post(FLARESOLVERR_URL, json=payload, timeout=150)
+            response = requests.post(f"{flaresolverr_host}/v1", json=payload, timeout=150)
+
             
             if not response.ok:
                 error_text = response.text[:500] if response.text else "No error message"
