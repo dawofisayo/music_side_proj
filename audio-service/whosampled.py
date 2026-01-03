@@ -35,30 +35,74 @@ def slugify(text: str) -> str:
     text = re.sub(r'[-\s]+', '-', text).strip('-')
     return text.title().replace(' ', '-')
 
-def fetch_with_flaresolverr(url: str, max_timeout: int = 60000) -> str:
-    """Fetch a URL using FlareSolverr to bypass Cloudflare"""
-    try:
-        payload = {
-            "cmd": "request.get",
-            "url": url,
-            "maxTimeout": max_timeout
-        }
-        
-        response = requests.post(FLARESOLVERR_URL, json=payload, timeout=120)
-        data = response.json()
-        
-        if data.get("status") == "ok":
-            return data.get("solution", {}).get("response", "")
-        else:
-            print(f"[WhoSampled] FlareSolverr error: {data.get('message')}", flush=True)
-            return ""
+def fetch_with_flaresolverr(url: str, max_timeout: int = 120000, retries: int = 2) -> str:
+    """Fetch a URL using FlareSolverr to bypass Cloudflare with retry logic"""
+    flaresolverr_host = FLARESOLVERR_URL.split('/v1')[0] if '/v1' in FLARESOLVERR_URL else FLARESOLVERR_URL
+    
+    for attempt in range(retries + 1):
+        try:
+            if attempt > 0:
+                print(f"[WhoSampled] Retry attempt {attempt}/{retries} for {url}", flush=True)
+            else:
+                print(f"[WhoSampled] Fetching {url} via FlareSolverr at: {flaresolverr_host}", flush=True)
             
-    except requests.exceptions.ConnectionError:
-        print("[WhoSampled] FlareSolverr not running.", flush=True)
-        return ""
-    except Exception as e:
-        print(f"[WhoSampled] FlareSolverr error: {e}", flush=True)
-        return ""
+            payload = {
+                "cmd": "request.get",
+                "url": url,
+                "maxTimeout": max_timeout,
+                "returnOnlyCookies": False
+            }
+            
+            # Increase timeout to match maxTimeout (120 seconds = 120000ms) + buffer
+            response = requests.post(FLARESOLVERR_URL, json=payload, timeout=150)
+            
+            if not response.ok:
+                error_text = response.text[:500] if response.text else "No error message"
+                print(f"[WhoSampled] FlareSolverr HTTP error: {response.status_code} - {error_text}", flush=True)
+                if attempt < retries:
+                    continue
+                return ""
+            
+            data = response.json()
+            
+            if data.get("status") == "ok":
+                solution = data.get("solution", {})
+                response_html = solution.get("response", "")
+                if response_html:
+                    print(f"[WhoSampled] Successfully fetched {len(response_html)} bytes from {url}", flush=True)
+                return response_html
+            else:
+                error_msg = data.get('message', 'Unknown error')
+                print(f"[WhoSampled] FlareSolverr error: {error_msg}", flush=True)
+                # Log full response for debugging if available
+                if data.get('status') == 'error':
+                    print(f"[WhoSampled] Full error response: {str(data)[:500]}", flush=True)
+                
+                # Retry on "Application failed to respond" errors
+                if "failed to respond" in error_msg.lower() and attempt < retries:
+                    print(f"[WhoSampled] Retrying due to application timeout...", flush=True)
+                    continue
+                
+                return ""
+                
+        except requests.exceptions.ConnectionError as e:
+            print(f"[WhoSampled] FlareSolverr connection error: Cannot connect to {FLARESOLVERR_URL}. Is FlareSolverr deployed and FLARESOLVERR_URL set correctly?", flush=True)
+            return ""
+        except requests.exceptions.Timeout:
+            print(f"[WhoSampled] FlareSolverr timeout: Request took longer than 150 seconds", flush=True)
+            if attempt < retries:
+                continue
+            return ""
+        except requests.exceptions.JSONDecodeError as e:
+            print(f"[WhoSampled] FlareSolverr JSON decode error: {str(e)}. Response: {response.text[:200] if 'response' in locals() else 'N/A'}", flush=True)
+            return ""
+        except Exception as e:
+            print(f"[WhoSampled] FlareSolverr error: {type(e).__name__}: {str(e)}", flush=True)
+            if attempt < retries:
+                continue
+            return ""
+    
+    return ""
 
 def parse_table_rows(rows, limit: int = None) -> list:
     """Parse table rows and extract track info. No limit by default."""
