@@ -199,6 +199,14 @@ app.get('/api/youtube/metadata/:videoId', async (req, res) => {
 // Connections daily puzzle
 app.get('/api/connections/daily', async (req, res) => {
   try {
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not set');
+      return res.status(500).json({ 
+        error: 'OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.' 
+      });
+    }
+
     const date = req.query.date || getEasternDate();
     
     // Check cache first
@@ -217,7 +225,27 @@ app.get('/api/connections/daily', async (req, res) => {
     res.json(puzzle);
   } catch (error) {
     console.error('Error generating connections:', error);
-    res.status(500).json({ error: 'Failed to generate puzzle' });
+    console.error('Error stack:', error.stack);
+    
+    // Return detailed error information
+    let errorMessage = 'Failed to generate puzzle';
+    let errorDetails = null;
+    
+    if (error.response) {
+      // OpenAI API error
+      errorMessage = `OpenAI API error: ${error.response.status} ${error.response.statusText}`;
+      errorDetails = error.response.data;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    // In development or if error details exist, include them
+    const shouldIncludeDetails = process.env.NODE_ENV === 'development' || errorDetails;
+    
+    res.status(500).json({ 
+      error: errorMessage,
+      ...(shouldIncludeDetails && { details: errorDetails || error.stack })
+    });
   }
 });
 
@@ -240,7 +268,8 @@ function getDailyMusicTheme(date) {
 }
 
 async function generateConnectionsPuzzle(theme) {
-  const prompt = `Create a Connections-style puzzle about ${theme}.
+  try {
+    const prompt = `Create a Connections-style puzzle about ${theme}.
 
 Generate 4 categories, each with 4 items (songs, artists, albums, etc.).
 
@@ -276,27 +305,75 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { 
-        role: 'system', 
-        content: 'You create Connections puzzles. CRITICAL: Every item in a category MUST actually match the category description. Verify each item individually. Categories must be distinct with no overlap. Output only valid JSON.' 
-      },
-      { role: 'user', content: prompt }
-    ],
-    temperature: 0.7, // Slightly lower for more accuracy
-  });
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('OpenAI API request timed out after 30 seconds')), 30000);
+    });
 
-  const responseText = completion.choices[0].message.content;
-  const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-  const data = JSON.parse(cleanedText);
-  
-  return {
-    date: new Date().toISOString().split('T')[0],
-    theme: theme,
-    groups: data.groups
-  };
+    // Race between the API call and timeout
+    const completion = await Promise.race([
+      openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { 
+            role: 'system', 
+            content: 'You create Connections puzzles. CRITICAL: Every item in a category MUST actually match the category description. Verify each item individually. Categories must be distinct with no overlap. Output only valid JSON.' 
+          },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7, // Slightly lower for more accuracy
+      }),
+      timeoutPromise
+    ]);
+
+    if (!completion.choices || !completion.choices[0] || !completion.choices[0].message) {
+      throw new Error('Invalid response from OpenAI API');
+    }
+
+    const responseText = completion.choices[0].message.content;
+    if (!responseText) {
+      throw new Error('Empty response from OpenAI API');
+    }
+
+    const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    let data;
+    try {
+      data = JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.error('Response text:', responseText);
+      throw new Error(`Failed to parse JSON response: ${parseError.message}`);
+    }
+
+    // Validate the response structure
+    if (!data.groups || !Array.isArray(data.groups) || data.groups.length !== 4) {
+      throw new Error('Invalid puzzle structure: expected 4 groups');
+    }
+
+    // Validate each group
+    for (const group of data.groups) {
+      if (!group.category || !group.items || !Array.isArray(group.items) || group.items.length !== 4) {
+        throw new Error(`Invalid group structure: ${JSON.stringify(group)}`);
+      }
+      if (typeof group.difficulty !== 'number' || group.difficulty < 1 || group.difficulty > 4) {
+        throw new Error(`Invalid difficulty level: ${group.difficulty}`);
+      }
+    }
+    
+    return {
+      date: new Date().toISOString().split('T')[0],
+      theme: theme,
+      groups: data.groups
+    };
+  } catch (error) {
+    console.error('Error in generateConnectionsPuzzle:', error);
+    // Re-throw with more context
+    if (error.message) {
+      throw error;
+    }
+    throw new Error(`Failed to generate puzzle: ${error.message || 'Unknown error'}`);
+  }
 }
 
 // Generate unique Heardle ID

@@ -38,11 +38,19 @@ function Connections() {
       setError(null);
       const response = await fetch(`${API_BASE_URL}/api/connections/daily`);
 
-      if (!response.ok) {
-        throw new Error(`Failed to load puzzle: ${response.status} ${response.statusText}`);
+      // Try to parse JSON even if response is not ok to get error details
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        // If JSON parsing fails, throw with status
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        // Use the error message from the API if available
+        throw new Error(data.error || data.details || `Failed to load puzzle: ${response.status} ${response.statusText}`);
+      }
 
       // Check if the response has an error or is missing groups
       if (data.error || !data.groups) {
