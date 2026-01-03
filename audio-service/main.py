@@ -101,8 +101,12 @@ async def recognize_from_youtube(url: str):
                     "isrc": music.get('external_ids', {}).get('isrc')
                 }
                 
-                # Get sample information from WhoSampled
-                sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+                # Get sample information from WhoSampled (optional - gracefully handle if FlareSolverr not available)
+                try:
+                    sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+                except Exception as e:
+                    print(f"[Main] WhoSampled error (non-fatal): {e}", flush=True)
+                    sample_data = {"sampled_by": [], "samples": []}
                 
                 return {
                     "success": True,
@@ -141,8 +145,12 @@ async def recognize_audio_file(file: UploadFile = File(...)):
                 "isrc": music.get('external_ids', {}).get('isrc')
             }
             
-            # Get sample information from WhoSampled
-            sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+            # Get sample information from WhoSampled (optional - gracefully handle if FlareSolverr not available)
+            try:
+                sample_data = await search_whosampled(track_info['title'], track_info['artist'])
+            except Exception as e:
+                print(f"[Main] WhoSampled error (non-fatal): {e}", flush=True)
+                sample_data = {"sampled_by": [], "samples": []}
             
             return {
                 "success": True,
