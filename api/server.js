@@ -269,7 +269,7 @@ function getDailyMusicTheme(date) {
 
 async function generateConnectionsPuzzle(theme) {
   try {
-    const prompt = `Create a Connections-style puzzle about ${theme}.
+  const prompt = `Create a Connections-style puzzle about ${theme}.
 
 Generate 4 categories, each with 4 items (songs, artists, albums, etc.).
 
@@ -313,15 +313,15 @@ Return ONLY valid JSON:
     // Race between the API call and timeout
     const completion = await Promise.race([
       openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You create Connections puzzles. CRITICAL: Every item in a category MUST actually match the category description. Verify each item individually. Categories must be distinct with no overlap. Output only valid JSON.' 
-          },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7, // Slightly lower for more accuracy
+    model: 'gpt-4o-mini',
+    messages: [
+      { 
+        role: 'system', 
+        content: 'You create Connections puzzles. CRITICAL: Every item in a category MUST actually match the category description. Verify each item individually. Categories must be distinct with no overlap. Output only valid JSON.' 
+      },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.7, // Slightly lower for more accuracy
       }),
       timeoutPromise
     ]);
@@ -330,12 +330,12 @@ Return ONLY valid JSON:
       throw new Error('Invalid response from OpenAI API');
     }
 
-    const responseText = completion.choices[0].message.content;
+  const responseText = completion.choices[0].message.content;
     if (!responseText) {
       throw new Error('Empty response from OpenAI API');
     }
 
-    const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     
     let data;
     try {
@@ -360,12 +360,12 @@ Return ONLY valid JSON:
         throw new Error(`Invalid difficulty level: ${group.difficulty}`);
       }
     }
-    
-    return {
-      date: new Date().toISOString().split('T')[0],
-      theme: theme,
-      groups: data.groups
-    };
+  
+  return {
+    date: new Date().toISOString().split('T')[0],
+    theme: theme,
+    groups: data.groups
+  };
   } catch (error) {
     console.error('Error in generateConnectionsPuzzle:', error);
     // Re-throw with more context

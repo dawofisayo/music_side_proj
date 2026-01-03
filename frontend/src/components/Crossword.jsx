@@ -29,15 +29,45 @@ function Crossword() {
     }
   }, [selectedClue]);
 
-  // Focus mobile input when cell is selected (for mobile keyboard)
-  useEffect(() => {
-    if (selectedCell && mobileInputRef.current) {
-      // Small delay to ensure the input is rendered
-      setTimeout(() => {
-        mobileInputRef.current?.focus();
-      }, 100);
+  // Helper to focus mobile input (only on mobile devices)
+  const focusMobileInput = () => {
+    // Check if we're on a mobile device
+    // Allow testing in Chrome by checking for mobile emulation or dev mode
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobileWidth = window.innerWidth <= 768;
+    // Allow testing in Chrome DevTools mobile emulation (check for touch support)
+    const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    // Check for Chrome DevTools mobile emulation (user agent contains "Mobile" when emulating)
+    const isChromeMobileEmulation = navigator.userAgent.includes('Mobile') && !isMobileDevice;
+    
+    const isMobile = isMobileDevice || (isMobileWidth && hasTouchSupport) || isChromeMobileEmulation;
+    
+    // Debug logging (remove in production)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 Mobile detection:', {
+        isMobileDevice,
+        isMobileWidth,
+        hasTouchSupport,
+        isChromeMobileEmulation,
+        isMobile,
+        hasInputRef: !!mobileInputRef.current
+      });
     }
-  }, [selectedCell]);
+    
+    if (isMobile && mobileInputRef.current) {
+      // Use requestAnimationFrame to ensure DOM is updated
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (mobileInputRef.current) {
+            console.log('📱 Focusing mobile input...');
+            mobileInputRef.current.focus();
+            // Force show keyboard on iOS
+            mobileInputRef.current.click();
+          }
+        }, 200);
+      });
+    }
+  };
 
   const loadPuzzle = async () => {
     try {
@@ -145,6 +175,9 @@ function Crossword() {
         setSelectedClue(clueId);
       }
     }
+    
+    // Focus mobile input after state updates
+    focusMobileInput();
   };
 
   // Handle mobile input
@@ -549,6 +582,12 @@ if (!displayClueId) {
                     key={colIdx}
                     className={`grid-cell ${isSelected ? 'selected' : ''} ${isInSelectedWord ? 'highlighted' : ''} ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''} ${cellIsRevealed ? 'revealed' : ''}`}
                     onClick={() => handleCellClick(rowIdx, colIdx)}
+                    onTouchStart={(e) => {
+                      // Handle touch - onClick will also fire, but this ensures immediate response
+                      handleCellClick(rowIdx, colIdx);
+                      // Note: preventDefault removed - browsers make touch events passive by default
+                      // If you need to prevent default behaviors, use CSS touch-action instead
+                    }}
                   >
                     {wordsStartingHere.length > 0 && (
                       <span className="cell-number">
@@ -597,43 +636,46 @@ if (!displayClueId) {
       <div className="crossword-main">
         <div className="grid-section">
           {renderGrid()}
-          {/* Mobile input for keyboard - hidden on desktop */}
-          {selectedCell && (
-            <input
-              ref={mobileInputRef}
-              type="text"
-              className="mobile-crossword-input"
-              onChange={handleMobileInput}
-              onKeyDown={(e) => {
-                // Handle backspace
-                if (e.key === 'Backspace' && !e.target.value) {
-                  if (!selectedCell || !puzzle || !selectedClue) return;
-                  const { row, col } = selectedCell;
-                  const clueId = selectedClue;
-                  const pos = puzzle.template.positions[clueId];
-                  if (!pos) return;
-                  
-                  const position = getCellPosition(row, col, clueId);
-                  if (position < 0 || position >= pos.length) return;
-                  
-                  const newAnswers = { ...userAnswers };
-                  if (newAnswers[clueId]) {
-                    const answerArray = newAnswers[clueId].split('');
-                    answerArray[position] = ' ';
-                    newAnswers[clueId] = answerArray.join('');
-                    setUserAnswers(newAnswers);
-                  }
-                  moveToPrevCell(row, col, clueId);
+          {/* Mobile input for keyboard - always rendered but hidden on desktop */}
+          <input
+            ref={mobileInputRef}
+            type="text"
+            className={`mobile-crossword-input ${selectedCell ? 'mobile-input-visible' : ''}`}
+            onChange={handleMobileInput}
+            onKeyDown={(e) => {
+              // Handle backspace
+              if (e.key === 'Backspace' && !e.target.value) {
+                if (!selectedCell || !puzzle || !selectedClue) return;
+                const { row, col } = selectedCell;
+                const clueId = selectedClue;
+                const pos = puzzle.template.positions[clueId];
+                if (!pos) return;
+                
+                const position = getCellPosition(row, col, clueId);
+                if (position < 0 || position >= pos.length) return;
+                
+                const newAnswers = { ...userAnswers };
+                if (newAnswers[clueId]) {
+                  const answerArray = newAnswers[clueId].split('');
+                  answerArray[position] = ' ';
+                  newAnswers[clueId] = answerArray.join('');
+                  setUserAnswers(newAnswers);
                 }
-              }}
-              maxLength={1}
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="characters"
-              inputMode="text"
-              aria-label="Crossword input"
-            />
-          )}
+                moveToPrevCell(row, col, clueId);
+              }
+            }}
+            onBlur={(e) => {
+              // Keep input value empty when not focused
+              e.target.value = '';
+            }}
+            maxLength={1}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="characters"
+            inputMode="text"
+            aria-label="Crossword input"
+            placeholder={selectedCell ? "Type letter" : ""}
+          />
         </div>
 
         <div className="clues-section">

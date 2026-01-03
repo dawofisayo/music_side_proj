@@ -435,6 +435,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Prevent double-tap zoom and other touch behaviors */
+  touch-action: manipulation;
 }
 
 .grid-cell:hover:not(.blocked) {
@@ -873,6 +875,7 @@
 
 /* Mobile input for crossword - triggers keyboard on mobile */
 .mobile-crossword-input {
+  /* Hidden on desktop by default */
   position: fixed;
   top: -1000px;
   left: -1000px;
@@ -886,35 +889,47 @@
   font-size: 1px;
   padding: 0;
   margin: 0;
+  z-index: -1;
+  display: none;
 }
 
-/* On mobile devices, make it accessible but still visually hidden */
+/* On mobile devices OR when width is small (Chrome DevTools), make it visible when needed */
 @media (max-width: 768px) {
   .mobile-crossword-input {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 50px;
-    background: linear-gradient(145deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.2) 100%);
-    border: 2px solid rgba(167, 139, 250, 0.5);
-    border-radius: 12px;
-    color: #fff;
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-    text-transform: uppercase;
-    opacity: 0.9;
-    pointer-events: auto;
-    z-index: 1000;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    position: fixed !important;
+    bottom: 30px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 250px !important;
+    height: 60px !important;
+    background: linear-gradient(145deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.3) 100%) !important;
+    border: 2px solid rgba(167, 139, 250, 0.6) !important;
+    border-radius: 16px !important;
+    color: #fff !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    opacity: 0.95 !important;
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5) !important;
+    backdrop-filter: blur(10px) !important;
+    display: block !important;
+    top: auto !important;
   }
   
   .mobile-crossword-input:focus {
-    outline: none;
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3), 0 6px 20px rgba(102, 126, 234, 0.5);
-    opacity: 1;
+    outline: none !important;
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.4), 0 8px 24px rgba(102, 126, 234, 0.6) !important;
+    opacity: 1 !important;
+    transform: translateX(-50%) scale(1.05) !important;
+  }
+  
+  .mobile-crossword-input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 18px !important;
+    text-transform: none !important;
   }
 }
