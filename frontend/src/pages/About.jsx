@@ -30,7 +30,7 @@ export default function About() {
             </div>
           </div>
           <p className="about-section-text">
-          Inspired by my friends who love music - we'd play guess the sample games in the car or during study breaks. 
+          Inspired by my friends who love music, we'd play guess the sample games in the car or during study breaks. 
           I started with a sample detector, then realized I wanted to build something more. 
           Existing music games felt disconnected, boring, not personal enough, missing that spark. 
           So I decided to build something different - a space where discovering music feels like hanging out with friends who just get your taste.
@@ -63,7 +63,7 @@ export default function About() {
                 </div>
               </div>
               <p className="about-card-text">
-              Built with React and Python - Claude was my pair programmer for the frontend, but the backend logic is all mine. 
+              This was primarily built with React and Python. Claude was my pair programmer for the frontend, but the backend logic is all mine. 
               Honestly? This is the trickiest AI project I've ever built by myself. 
               Sometimes the puzzles are a bit off (shoutout crosswords). 
               Still learning! Feel free to peek at the code and see what's happening under the hood.
@@ -91,8 +91,8 @@ export default function About() {
                 </div>
               </div>
               <p className="about-card-text">
-              My 'documentation🤓' playlist - every song I used to test the app while building it. 
-              Super allover the place but basically the soundtrack to this whole journey.
+              My 'documentation🤓' playlist is every song I used to test the app while building it. 
+              Super all over the place but basically the soundtrack to this whole journey.
               </p>
               <a 
                 href="https://open.spotify.com/playlist/1M8l4HNq8g8ABdyFgBSyMI?si=f31ba6bf5dde4891" 
@@ -129,7 +129,7 @@ export default function About() {
                 <h4 className="about-feature-title">Connect Your Spotify</h4>
                 <p className="about-feature-text">
                 Honestly, this is what I wanted to build from day one - personalized games using your actual Spotify data. Your songs, your genres, your era. 
-                But the Anna's Archive scandal happened (hackers got 86 million music files from Spotify a few weeks ago), and now the API is locked down for new apps. 
+                But the <a href="https://techcrunch.com/2025/12/23/pirate-group-annas-archive-says-it-has-scraped-86-million-songs-from-spotify/" target="_blank" rel="noopener noreferrer" className="about-link">Anna's Archive scandal</a> happened (hackers got 86 million music files from Spotify a few weeks ago), and now the API is locked down for new apps. 
                 Hopefully temporarily.
                 </p>
               </div>
